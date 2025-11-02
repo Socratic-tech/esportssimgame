@@ -88,6 +88,7 @@
             <li><span class="highlight">Player Focus</span>: Training & team culture</li>
           </ul>
         </li>
+        <li><strong>Random choices each turn:</strong> You'll see 3 different options per category each turn</li>
         <li><strong>Your team competes in a tournament each turn</strong> — win probability depends on TSR & morale</li>
         <li><strong>Manage your finances</strong> — balance expenses with tournament prizes and sponsorships</li>
         <li><strong>Survive 8 turns</strong> without running out of money or losing player morale</li>
@@ -127,12 +128,11 @@
 
       <h3>💡 Strategy Tips</h3>
       <ul>
+        <li><strong>Adapt to what you're offered:</strong> Each turn presents different choices - be flexible!</li>
         <li><strong>Win tournaments early!</strong> Prize money is your main income source. Build TSR fast.</li>
-        <li><strong>Watch your fixed costs:</strong> Every analyst you hire costs $5,000/turn forever.</li>
+        <li><strong>Watch your fixed costs:</strong> Some decisions permanently increase salaries.</li>
         <li><strong>TSR vs Morale trade-offs:</strong> Both affect win probability - find the right balance.</li>
-        <li><strong>Losing hurts:</strong> You lose 5% of fans and pay a $10K penalty when you lose tournaments.</li>
-        <li><strong>Sponsorships scale with rank:</strong> Elite teams get $30K/turn base, Rookies only get $9K/turn.</li>
-        <li><strong>Avoid bankruptcy:</strong> Going below $0 for 2 turns = game over!</li>
+        <li><strong>No perfect strategy:</strong> With randomized options, you'll need to adapt each playthrough!</li>
       </ul>
 
       <h3>🏆 Winning the Game</h3>
@@ -157,7 +157,7 @@
     <header>
       <div class="row">
         <h1>Esports Company Management Simulation</h1>
-        <span class="badge">Manager X · 8 Turns · Local‑only</span>
+        <span class="badge">Manager X · 8 Turns · Dynamic Choices</span>
       </div>
       <div class="row">
         <button class="btn ghost" id="btnHelp">📚 Tutorial</button>
@@ -179,27 +179,22 @@
 
         <div class="divider"></div>
         <div class="section-title">Decisions (pick 1 in each category)</div>
+        <p class="muted" style="font-size:13px;margin-top:0">💡 Options are randomized each turn - adapt your strategy!</p>
 
         <form id="choices" class="opts">
           <fieldset class="card" style="padding:12px;border:none">
             <legend class="label">1) Operations <span class="help-icon" title="Infrastructure and support staff decisions">?</span></legend>
-            <label class="opt"><input type="radio" name="ops" value="analyst"> <div><b>Hire an Analyst ($20,000)</b><br><span class="muted">TSR +5 this turn; ongoing salaries +$5,000/turn. Analysts improve team skill but increase fixed costs.</span></div></label>
-            <label class="opt"><input type="radio" name="ops" value="house"> <div><b>Upgrade Team House ($40,000)</b><br><span class="muted">Morale +10; Fans +500. Better facilities make players happier and attract new fans.</span></div></label>
-            <label class="opt"><input type="radio" name="ops" value="lean"> <div><b>Stay Lean ($0)</b><br><span class="muted">No spend; risk stagnation (TSR −2). Save cash but fall behind in training quality.</span></div></label>
+            <div id="opsOptions"></div>
           </fieldset>
 
           <fieldset class="card" style="padding:12px;border:none">
             <legend class="label">2) Marketing <span class="help-icon" title="Growing your fanbase and revenue streams">?</span></legend>
-            <label class="opt"><input type="radio" name="mkt" value="merch"> <div><b>Launch Fan Merch ($25,000)</b><br><span class="muted">+1,000 fans now; +$10,000 next turn. Upfront investment that pays back through merchandise sales.</span></div></label>
-            <label class="opt"><input type="radio" name="mkt" value="local"> <div><b>Host Local Tournament ($30,000)</b><br><span class="muted">+2,000 fans; Morale +5. Community events grow your brand and energize the team.</span></div></label>
-            <label class="opt"><input type="radio" name="mkt" value="minimal"> <div><b>Minimal Social ($0)</b><br><span class="muted">Save cash; fan growth flat. Maintain current audience without new marketing spend.</span></div></label>
+            <div id="mktOptions"></div>
           </fieldset>
 
           <fieldset class="card" style="padding:12px;border:none">
             <legend class="label">3) Player Focus <span class="help-icon" title="Training intensity vs team culture balance">?</span></legend>
-            <label class="opt"><input type="radio" name="ply" value="bootcamp"> <div><b>Intense Training Bootcamp ($0)</b><br><span class="muted">TSR +8; Morale −10. Grueling practice improves skills but burns out players.</span></div></label>
-            <label class="opt"><input type="radio" name="ply" value="retreat"> <div><b>Team Bonding Retreat ($10,000)</b><br><span class="muted">Morale +10; TSR −3. Build team chemistry at the cost of practice time.</span></div></label>
-            <label class="opt"><input type="radio" name="ply" value="balanced"> <div><b>Balanced Schedule ($0)</b><br><span class="muted">TSR +2; Morale +2. Steady improvement in both areas without extremes.</span></div></label>
+            <div id="plyOptions"></div>
           </fieldset>
         </form>
 
@@ -235,9 +230,9 @@
         <ul class="muted" style="margin-top:0;font-size:14px">
           <li>Game is 8 turns (2 years; 1 turn = quarter).</li>
           <li>Pick <b>one</b> option per category each turn.</li>
+          <li><b>Random options</b> each turn for replayability!</li>
           <li>Every turn: tournament competition for prizes!</li>
           <li>Win probability = (TSR × Morale%) ÷ opponent strength</li>
-          <li>Fixed expenses (salaries + travel) deducted each turn.</li>
           <li>Balance spending, training, and team happiness!</li>
         </ul>
         
@@ -267,11 +262,84 @@
       morale: 70,
       rank: 3,
       analysts: 0,
+      coaches: 0,
       merchPayoutNext: 0,
+      sponsorDealNext: 0,
       negCashStreak: 0,
       history: [],
       name: '',
-      seenTutorial: false
+      seenTutorial: false,
+      currentChoices: null
+    }
+
+    // Define 20 options for each category
+    const OPTIONS_POOL = {
+      ops: [
+        { id: 'analyst', name: 'Hire Performance Analyst', cost: 20000, tsr: 5, salaries: 5000, desc: 'TSR +5 this turn; +$5K/turn salaries. Improves team performance analysis.' },
+        { id: 'coach', name: 'Hire Assistant Coach', cost: 25000, tsr: 3, morale: 5, salaries: 6000, desc: 'TSR +3, Morale +5; +$6K/turn salaries. Helps with training and team culture.' },
+        { id: 'house', name: 'Upgrade Team House', cost: 40000, morale: 10, fans: 500, desc: 'Morale +10, Fans +500. Better facilities attract attention.' },
+        { id: 'equipment', name: 'New Gaming Equipment', cost: 15000, tsr: 4, desc: 'TSR +4. Latest hardware for competitive edge.' },
+        { id: 'nutritionist', name: 'Hire Sports Nutritionist', cost: 18000, morale: 8, salaries: 4000, desc: 'Morale +8; +$4K/turn salaries. Peak physical condition matters.' },
+        { id: 'facility', name: 'Lease Premium Facility', cost: 50000, tsr: 6, morale: 8, fans: 800, desc: 'TSR +6, Morale +8, Fans +800. Professional training environment.' },
+        { id: 'dataroom', name: 'Build Data Analytics Room', cost: 35000, tsr: 7, desc: 'TSR +7. Advanced stats and opponent analysis.' },
+        { id: 'mentalcoach', name: 'Hire Mental Performance Coach', cost: 22000, morale: 12, salaries: 5000, desc: 'Morale +12; +$5K/turn salaries. Handles pressure and mindset.' },
+        { id: 'bootcamp_facility', name: 'Bootcamp Facility Rental', cost: 12000, tsr: 5, morale: -3, desc: 'TSR +5, Morale -3. Intense environment for rapid improvement.' },
+        { id: 'chef', name: 'Hire Team Chef', cost: 20000, morale: 10, salaries: 4500, desc: 'Morale +10; +$4.5K/turn salaries. Quality meals boost team happiness.' },
+        { id: 'lean', name: 'Stay Lean', cost: 0, tsr: -2, desc: 'TSR -2. No infrastructure spend this quarter.' },
+        { id: 'manager', name: 'Hire Team Manager', cost: 30000, morale: 6, fans: 400, salaries: 7000, desc: 'Morale +6, Fans +400; +$7K/turn salaries. Handles logistics and PR.' },
+        { id: 'scrim_partner', name: 'Contract Scrim Partners', cost: 8000, tsr: 3, desc: 'TSR +3. Regular practice against quality opponents.' },
+        { id: 'streaming_setup', name: 'Professional Streaming Setup', cost: 25000, fans: 1200, desc: 'Fans +1,200. Content creation for brand growth.' },
+        { id: 'physio', name: 'Hire Physiotherapist', cost: 16000, morale: 7, salaries: 3500, desc: 'Morale +7; +$3.5K/turn salaries. Prevents injuries and fatigue.' },
+        { id: 'office', name: 'Open Office Space', cost: 45000, morale: 9, fans: 600, desc: 'Morale +9, Fans +600. Professional headquarters.' },
+        { id: 'software', name: 'Training Software Licenses', cost: 10000, tsr: 3, desc: 'TSR +3. Cutting-edge practice tools.' },
+        { id: 'consultant', name: 'Strategy Consultant (Contract)', cost: 28000, tsr: 6, desc: 'TSR +6. Expert advice, no permanent salary increase.' },
+        { id: 'minimal', name: 'Minimal Operations', cost: 0, desc: 'No operations spend. Save all resources.' },
+        { id: 'veteran', name: 'Sign Veteran Player (Sub)', cost: 35000, tsr: 8, morale: -5, salaries: 8000, desc: 'TSR +8, Morale -5; +$8K/turn salaries. Skill but potential ego clash.' }
+      ],
+      mkt: [
+        { id: 'merch', name: 'Launch Fan Merchandise', cost: 25000, fans: 1000, payout: 10000, desc: '+1,000 fans now; +$10K revenue next turn. Store and products.' },
+        { id: 'local', name: 'Host Local Tournament', cost: 30000, fans: 2000, morale: 5, desc: 'Fans +2,000, Morale +5. Community engagement event.' },
+        { id: 'influencer', name: 'Influencer Partnership', cost: 20000, fans: 1500, desc: 'Fans +1,500. Social media collaboration.' },
+        { id: 'sponsor_hunt', name: 'Sponsor Acquisition Campaign', cost: 15000, payout: 25000, desc: '+$25K sponsor deal next turn. Proactive outreach.' },
+        { id: 'content_team', name: 'Hire Content Creator', cost: 28000, fans: 800, salaries: 5000, desc: 'Fans +800; +$5K/turn salaries. Consistent video/stream content.' },
+        { id: 'billboard', name: 'Billboard Advertising', cost: 35000, fans: 2500, desc: 'Fans +2,500. Big city visibility campaign.' },
+        { id: 'social_media', name: 'Social Media Blitz', cost: 12000, fans: 1200, desc: 'Fans +1,200. Coordinated online campaign.' },
+        { id: 'charity', name: 'Charity Stream Event', cost: 18000, fans: 1800, morale: 6, desc: 'Fans +1,800, Morale +6. Positive brand image.' },
+        { id: 'documentary', name: 'Team Documentary Series', cost: 40000, fans: 3000, desc: 'Fans +3,000. Behind-the-scenes content.' },
+        { id: 'podcast', name: 'Start Team Podcast', cost: 8000, fans: 600, desc: 'Fans +600. Low-cost ongoing content.' },
+        { id: 'minimal', name: 'Minimal Marketing', cost: 0, desc: 'No marketing spend. Organic growth only.' },
+        { id: 'convention', name: 'Gaming Convention Booth', cost: 32000, fans: 2200, desc: 'Fans +2,200. Meet fans in person.' },
+        { id: 'giveaway', name: 'Fan Giveaway Campaign', cost: 15000, fans: 1400, desc: 'Fans +1,400. Prizes and engagement.' },
+        { id: 'rebrand', name: 'Brand Refresh & New Logo', cost: 22000, fans: 1000, morale: 4, desc: 'Fans +1,000, Morale +4. Fresh image energizes team and fans.' },
+        { id: 'esports_bar', name: 'Sponsor Esports Bar Events', cost: 20000, fans: 1600, desc: 'Fans +1,600. Partner with local venues.' },
+        { id: 'youtube', name: 'YouTube Channel Push', cost: 10000, fans: 900, desc: 'Fans +900. Video content strategy.' },
+        { id: 'press_release', name: 'Press Release Campaign', cost: 5000, fans: 500, desc: 'Fans +500. Traditional media outreach.' },
+        { id: 'fan_meetup', name: 'Fan Meetup Events', cost: 14000, fans: 1100, morale: 7, desc: 'Fans +1,100, Morale +7. Players meet supporters.' },
+        { id: 'tiktok', name: 'TikTok Marketing Campaign', cost: 11000, fans: 1300, desc: 'Fans +1,300. Short-form viral content.' },
+        { id: 'newsletter', name: 'Start Fan Newsletter', cost: 6000, fans: 400, desc: 'Fans +400. Email engagement strategy.' }
+      ],
+      ply: [
+        { id: 'bootcamp', name: 'Intense Training Bootcamp', cost: 0, tsr: 8, morale: -10, desc: 'TSR +8, Morale -10. Grueling practice schedule.' },
+        { id: 'retreat', name: 'Team Bonding Retreat', cost: 10000, morale: 10, tsr: -3, desc: 'Morale +10, TSR -3. Leisure and team building.' },
+        { id: 'balanced', name: 'Balanced Schedule', cost: 0, tsr: 2, morale: 2, desc: 'TSR +2, Morale +2. Sustainable approach.' },
+        { id: 'vod_review', name: 'VOD Review Sessions', cost: 5000, tsr: 4, desc: 'TSR +4. Learn from past matches.' },
+        { id: 'scrims', name: 'Extra Scrim Blocks', cost: 8000, tsr: 6, morale: -4, desc: 'TSR +6, Morale -4. More practice time.' },
+        { id: 'vacation', name: 'Mandatory Team Vacation', cost: 20000, morale: 15, tsr: -5, desc: 'Morale +15, TSR -5. Rest and relaxation.' },
+        { id: 'individual_coaching', name: 'Individual Player Coaching', cost: 15000, tsr: 7, desc: 'TSR +7. Personalized skill development.' },
+        { id: 'team_activities', name: 'Weekly Team Activities', cost: 6000, morale: 8, desc: 'Morale +8. Bowling, escape rooms, etc.' },
+        { id: 'meditation', name: 'Meditation & Yoga Sessions', cost: 4000, morale: 6, desc: 'Morale +6. Mental clarity and stress relief.' },
+        { id: 'lan_bootcamp', name: 'LAN Bootcamp', cost: 12000, tsr: 9, morale: -6, desc: 'TSR +9, Morale -6. Intense offline practice.' },
+        { id: 'korean_bootcamp', name: 'Korean Bootcamp Trip', cost: 35000, tsr: 12, morale: -8, fans: 500, desc: 'TSR +12, Morale -8, Fans +500. Train in top region.' },
+        { id: 'light_practice', name: 'Light Practice Schedule', cost: 0, tsr: -1, morale: 5, desc: 'TSR -1, Morale +5. Recovery period.' },
+        { id: 'sports_psych', name: 'Sports Psychology Workshops', cost: 8000, morale: 9, tsr: 1, desc: 'Morale +9, TSR +1. Mental game training.' },
+        { id: 'opponent_prep', name: 'Opponent-Specific Prep', cost: 10000, tsr: 5, desc: 'TSR +5. Study next opponents deeply.' },
+        { id: 'internal_tournament', name: 'Internal Tournament', cost: 3000, tsr: 3, morale: 4, desc: 'TSR +3, Morale +4. Friendly competition.' },
+        { id: 'replay_analysis', name: 'Professional Replay Analysis', cost: 7000, tsr: 4, desc: 'TSR +4. Expert breakdown of gameplay.' },
+        { id: 'team_dinner', name: 'Weekly Team Dinners', cost: 4000, morale: 7, desc: 'Morale +7. Build chemistry over meals.' },
+        { id: 'music_room', name: 'Music & Recreation Room', cost: 12000, morale: 10, desc: 'Morale +10. Downtime space for players.' },
+        { id: 'no_practice', name: 'No Practice This Quarter', cost: 0, tsr: -4, morale: 8, desc: 'TSR -4, Morale +8. Full break from competitive.' },
+        { id: 'hybrid_schedule', name: 'Hybrid Training Schedule', cost: 5000, tsr: 4, morale: 3, desc: 'TSR +4, Morale +3. Mix of practice and rest.' }
+      ]
     }
 
     let S = JSON.parse(JSON.stringify(STARTING))
@@ -286,6 +354,46 @@
     const fmtMoney = n => `$${n.toLocaleString()}`
     const clamp = (v,min,max) => Math.max(min, Math.min(max, v))
     const rankName = t => t===1? 'Tier 1 (Elite)' : t===2? 'Tier 2 (Challenger)' : 'Tier 3 (Rookie)'
+
+    // Fisher-Yates shuffle
+    function shuffle(array) {
+      const arr = [...array]
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]]
+      }
+      return arr
+    }
+
+    function selectRandomOptions() {
+      const ops = shuffle(OPTIONS_POOL.ops).slice(0, 3)
+      const mkt = shuffle(OPTIONS_POOL.mkt).slice(0, 3)
+      const ply = shuffle(OPTIONS_POOL.ply).slice(0, 3)
+      return { ops, mkt, ply }
+    }
+
+    function renderOptions() {
+      S.currentChoices = selectRandomOptions()
+
+      const renderCategory = (options, category) => {
+        return options.map(opt => {
+          const costStr = opt.cost > 0 ? `$${opt.cost.toLocaleString()}` : '$0'
+          return `
+            <label class="opt">
+              <input type="radio" name="${category}" value="${opt.id}">
+              <div>
+                <b>${opt.name} (${costStr})</b><br>
+                <span class="muted">${opt.desc}</span>
+              </div>
+            </label>
+          `
+        }).join('')
+      }
+
+      el('opsOptions').innerHTML = renderCategory(S.currentChoices.ops, 'ops')
+      el('mktOptions').innerHTML = renderCategory(S.currentChoices.mkt, 'mkt')
+      el('plyOptions').innerHTML = renderCategory(S.currentChoices.ply, 'ply')
+    }
 
     function render(){
       const yr = Math.floor((S.turn-1) / 4) + 1
@@ -312,6 +420,8 @@
         ${stat('Morale', S.morale, S.morale < 30 ? '<span class="warntext">⚠ Low!</span>' : '')}
         ${stat('Rank', rankName(S.rank))}
       `
+
+      renderOptions()
     }
 
     function appendLog(lines){
@@ -350,61 +460,52 @@
       return 'Stable performance with costs under control; maintain assets that drive recurring revenue.'
     }
 
-    function applyDecisions(ops, mkt, ply){
+    function applyDecisions(opsId, mktId, plyId){
       let log = []
 
-      // ===== FIXED BUG: Apply merch payout from PREVIOUS turn FIRST =====
+      // Apply payouts from previous turn first
       const merchSales = S.merchPayoutNext
       S.merchPayoutNext = 0
+      const sponsorDeal = S.sponsorDealNext
+      S.sponsorDealNext = 0
 
       let variableCosts = 0
 
-      // Operations
-      if (ops === 'analyst'){
-        variableCosts += 20000
-        S.tsr += 5
-        S.salaries += 5000
-        S.analysts += 1
-        log.push('Operations: Hired an Analyst (Variable −$20,000; Fixed +$5,000/turn; TSR +5).')
-      } else if (ops === 'house'){
-        variableCosts += 40000
-        S.morale += 10
-        S.fans += 500
-        log.push('Operations: Upgraded Team House (Variable −$40,000; Morale +10; Fans +500).')
-      } else if (ops === 'lean'){
-        S.tsr -= 2
-        log.push('Operations: Stayed Lean (no spend; TSR −2).')
+      // Find the selected options
+      const opsOpt = OPTIONS_POOL.ops.find(o => o.id === opsId)
+      const mktOpt = OPTIONS_POOL.mkt.find(o => o.id === mktId)
+      const plyOpt = OPTIONS_POOL.ply.find(o => o.id === plyId)
+
+      // Apply operations
+      if (opsOpt) {
+        variableCosts += opsOpt.cost || 0
+        S.tsr += opsOpt.tsr || 0
+        S.morale += opsOpt.morale || 0
+        S.fans += opsOpt.fans || 0
+        S.salaries += opsOpt.salaries || 0
+        log.push(`Operations: ${opsOpt.name} (Cost: ${fmtMoney(opsOpt.cost || 0)}${opsOpt.salaries ? `; +${fmtMoney(opsOpt.salaries)}/turn salary` : ''}).`)
       }
 
-      // Marketing
-      if (mkt === 'merch'){
-        variableCosts += 25000
-        S.fans += 1000
-        S.merchPayoutNext = 10000
-        log.push('Marketing: Launched Merch (Variable −$25,000; +1,000 Fans; +$10,000 merch revenue will arrive NEXT turn).')
-      } else if (mkt === 'local'){
-        variableCosts += 30000
-        S.fans += 2000
-        S.morale += 5
-        log.push('Marketing: Hosted Local Tournament (Variable −$30,000; +2,000 Fans; Morale +5).')
-      } else if (mkt === 'minimal'){
-        log.push('Marketing: Minimal Social (no variable spend).')
+      // Apply marketing
+      if (mktOpt) {
+        variableCosts += mktOpt.cost || 0
+        S.fans += mktOpt.fans || 0
+        S.morale += mktOpt.morale || 0
+        S.salaries += mktOpt.salaries || 0
+        if (mktOpt.payout) {
+          if (mktOpt.id === 'merch') S.merchPayoutNext = mktOpt.payout
+          else S.sponsorDealNext = mktOpt.payout
+        }
+        log.push(`Marketing: ${mktOpt.name} (Cost: ${fmtMoney(mktOpt.cost || 0)}${mktOpt.payout ? `; +${fmtMoney(mktOpt.payout)} next turn` : ''}${mktOpt.salaries ? `; +${fmtMoney(mktOpt.salaries)}/turn salary` : ''}).`)
       }
 
-      // Player Focus
-      if (ply === 'bootcamp'){
-        S.tsr += 8
-        S.morale -= 10
-        log.push('Player Focus: Intense Bootcamp (TSR +8; Morale −10).')
-      } else if (ply === 'retreat'){
-        variableCosts += 10000
-        S.morale += 10
-        S.tsr -= 3
-        log.push('Player Focus: Team Retreat (Variable −$10,000; Morale +10; TSR −3).')
-      } else if (ply === 'balanced'){
-        S.tsr += 2
-        S.morale += 2
-        log.push('Player Focus: Balanced Schedule (TSR +2; Morale +2).')
+      // Apply player focus
+      if (plyOpt) {
+        variableCosts += plyOpt.cost || 0
+        S.tsr += plyOpt.tsr || 0
+        S.morale += plyOpt.morale || 0
+        S.fans += plyOpt.fans || 0
+        log.push(`Player Focus: ${plyOpt.name} (Cost: ${fmtMoney(plyOpt.cost || 0)}).`)
       }
 
       S.tsr = clamp(Math.round(S.tsr), 0, 100)
@@ -432,7 +533,7 @@
       const travel = 5000
       variableCosts += travel
 
-      const totalRevenue = sponsorships + merchSales + prizeMoney
+      const totalRevenue = sponsorships + merchSales + sponsorDeal + prizeMoney
       const totalExpenses = fixedExpenses + variableCosts
       const profitLoss = totalRevenue - totalExpenses
 
@@ -453,8 +554,14 @@
         variable: variableCosts
       })
 
+      const revenueBreakdown = []
+      if (sponsorships > 0) revenueBreakdown.push(`Sponsors ${fmtMoney(sponsorships)}`)
+      if (prizeMoney > 0) revenueBreakdown.push(`Prize ${fmtMoney(prizeMoney)}`)
+      if (merchSales > 0) revenueBreakdown.push(`Merch ${fmtMoney(merchSales)}`)
+      if (sponsorDeal > 0) revenueBreakdown.push(`Deal ${fmtMoney(sponsorDeal)}`)
+
       log.push(
-        `Revenue: Sponsorships ${fmtMoney(sponsorships)} + Prize ${fmtMoney(prizeMoney)} + Merch ${fmtMoney(merchSales)} = ${fmtMoney(totalRevenue)}`,
+        `Revenue: ${revenueBreakdown.join(' + ')} = ${fmtMoney(totalRevenue)}`,
         `Expenses: Fixed ${fmtMoney(fixedExpenses)} + Variable ${fmtMoney(variableCosts)} = ${fmtMoney(totalExpenses)}`,
         `Turn Net: ${profitLoss >= 0 ? '+' : ''}${fmtMoney(profitLoss)}`,
         `Cash: ${fmtMoney(S.cash)} • TSR: ${S.tsr} • Morale: ${S.morale} • Fans: ${S.fans.toLocaleString()}`,
