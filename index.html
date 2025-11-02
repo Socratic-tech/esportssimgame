@@ -109,8 +109,8 @@
     <div class="card" id="output" style="display:none">
       <h2>Simulation Results</h2>
       <pre id="final"></pre>
-      <button id="btnPDF">Save Final Report (PDF)</button>
-      <button id="btnContinue">Continue Simulation</button>
+      <button id=\"btnPDF\">Save Final Report (PDF)</button>
+      <button id=\"btnContinue\">Continue Season (+8 turns)</button>
     </div>
   </div>
 
@@ -317,16 +317,17 @@ ${assess}`
     function bindEndButtons(){
       $('#btnPDF')?.addEventListener('click',()=>window.print())
       $('#btnContinue')?.addEventListener('click',()=>{
-        const extra = parseInt(prompt('How many extra turns would you like to add to continue the simulation?', '4')||'0',10)
-        if (!Number.isFinite(extra) || extra<=0) return
-        S.turnsTotal += extra
+        S.turnsTotal += 8
         $output.style.display='none'
         $game.style.display='block'
         $('#choices')?.reset()
+        appendLog('Season extended: +8 turns added. Make your next set of decisions!')
         render()
-        // re-enable run button
-        $('#btnRun').disabled=false
+        // re-enable run button for continued weekly interaction
+        const runBtn = document.getElementById('btnRun');
+        if (runBtn) runBtn.disabled = false
       })
+    })
     }
 
     function confetti(n=20){
