@@ -3,368 +3,645 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Esports Company Management Simulation</title>
+  <title>Esports Company Management Simulation • Manager X</title>
+  <meta name="description" content="A turn‑based, 8‑turn (2‑year) esports org management simulation. Make 3 decisions per turn and maximize rank + profit." />
   <style>
-    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;padding:0;background:#0b1020;color:#e8eeff;line-height:1.6}
-    header{background:#121a33;padding:16px;text-align:center;border-bottom:2px solid #1f2a52}
-    h1{margin:0;font-size:1.8em;color:#6aa8ff}
-    .wrap{max-width:900px;margin:0 auto;padding:20px}
-    textarea,input{width:100%;padding:10px;margin-top:5px;background:#0e1633;border:1px solid #2a3a6e;border-radius:8px;color:#e8eeff}
-    button{background:#1a3d86;border:1px solid #2453a5;color:#fff;padding:10px 14px;border-radius:8px;cursor:pointer}
-    button:hover{filter:brightness(1.1)}
-    .card{background:#121a33;border:1px solid #1f2a52;border-radius:12px;padding:16px;margin-bottom:20px}
-    .event{background:#0f1632;border:1px solid #2a3a6e;border-radius:12px;padding:12px;margin:8px 0}
-    .tweet{background:#0b1330;border:1px dashed #2a3a6e;border-radius:10px;padding:8px;margin-top:6px;font-size:14px}
-    .coach{background:#0d1938;border-left:4px solid #6aa8ff;padding:10px;border-radius:8px;margin-top:10px}
-    .takeaway{background:#0e2a1a;border-left:4px solid #10b981;padding:10px;border-radius:8px;margin-top:6px}
-    @media print{body{background:#fff;color:#000}.card{background:#fff;color:#000;border-color:#000}}
+    :root{
+      --bg:#0b1020; --panel:#111936; --panel-2:#0e1530; --ink:#e8eeff; --muted:#a9b7da; --line:#263a74; --accent:#6aa8ff;
+      --good:#10b981; --warn:#f59e0b; --bad:#ef4444; --shadow:rgba(0,0,0,.35)
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg, #0b1020, #0a0f1f);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:var(--accent)}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+    h1{font-size:clamp(22px,3vw,28px);margin:0}
+    h2{font-size:20px;margin:16px 0 8px 0;color:#cfe1ff}
+    h3{font-size:18px;margin:12px 0 8px 0;color:#cfe1ff}
+    .badge{padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:#0f1630;color:#cfe1ff;white-space:nowrap}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:980px){.grid{grid-template-columns:1.1fr .9fr}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 10px 26px var(--shadow)}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid var(--line);background:#10183a;color:#dfe9ff;padding:10px 14px;border-radius:12px;cursor:pointer;font-size:14px}
+    .btn:hover{filter:brightness(1.08)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(180deg,#1a3d86,#0e2b66);border-color:#2453a5}
+    .btn.good{background:linear-gradient(180deg,#167a3a,#0e5d2b);border-color:#1a8f46}
+    .btn.warn{background:linear-gradient(180deg,#8a5a10,#5f3f0b);border-color:#b07217}
+    .btn.bad{background:linear-gradient(180deg,#7a1620,#5d0e14);border-color:#8f1a25}
+    .btn.ghost{background:#0f1632}
+    .section-title{margin:0 0 8px 0;font-weight:800;font-size:14px;color:#cfe1ff;text-transform:uppercase;letter-spacing:.08em}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    @media(min-width:760px){.stats{grid-template-columns:repeat(3,1fr)}}
+    .stat{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px}
+    .stat b{display:block;font-size:12px;color:#bcd0ff;text-transform:uppercase;letter-spacing:.08em}
+    .label{font-size:12px;color:#bcd0ff}
+    .muted{color:var(--muted)}
+    .opts{display:grid;gap:12px}
+    .opt{display:flex;gap:12px;align-items:flex-start;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px}
+    .opt input{margin-top:4px}
+    .divider{height:1px;background:var(--line);margin:10px 0}
+    .log{max-height:240px;overflow:auto;background:#0f1632;border:1px solid var(--line);border-radius:12px;padding:10px;white-space:pre-wrap;font-size:13px;line-height:1.6}
+    .footer{margin-top:18px;color:#9fb2e6;font-size:14px}
+    .kbd{background:#131d3e;border:1px solid var(--line);border-bottom-color:#1b2a5b;padding:2px 6px;border-radius:6px}
+    .notice{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#0e1633}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;background:#0d1534;border:1px solid var(--line);border-radius:999px}
+    .center{display:flex;justify-content:center;align-items:center}
+    .end{display:flex;justify-content:flex-end}
+    .warntext{color:var(--warn)}
+    .goodtext{color:var(--good)}
+    .badtext{color:var(--bad)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    
+    /* Modal styles */
+    .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+    .modal{background:var(--panel);border:2px solid var(--accent);border-radius:16px;max-width:700px;max-height:90vh;overflow-y:auto;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+    .modal h2{margin-top:0;color:#6aa8ff}
+    .modal ul{margin:8px 0;padding-left:24px}
+    .modal li{margin:4px 0}
+    .term{background:var(--panel-2);border-left:3px solid var(--accent);padding:8px 12px;margin:8px 0;border-radius:4px}
+    .term strong{color:#6aa8ff}
+    .highlight{background:rgba(106,168,255,0.15);padding:2px 6px;border-radius:4px;color:#6aa8ff}
+    details{margin:12px 0;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px}
+    summary{cursor:pointer;font-weight:600;color:#cfe1ff;user-select:none}
+    summary:hover{color:var(--accent)}
+    .help-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--accent);color:white;border-radius:50%;font-size:12px;font-weight:bold;cursor:help;margin-left:4px}
   </style>
 </head>
 <body>
-  <header>
-    <h1>🎮 Esports Company Management Simulation</h1>
-    <p>Run your own esports organization for 8 turns (2 years) — balance finances, fan growth, and performance!</p>
-  </header>
-  <div class="wrap">
-    <div class="card">
-      <label for="studentName"><b>Student Name:</b></label>
-      <input id="studentName" placeholder="Enter your name" />
-    </div>
+  <!-- Tutorial Modal -->
+  <div id="tutorialModal" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <h2>📚 Welcome to Esports Company Management!</h2>
+      
+      <p>You're the manager of a new esports organization. Your goal is to build a successful team over <strong>8 turns (2 years)</strong> by making smart business decisions.</p>
+      
+      <h3>🎮 How to Play</h3>
+      <ol>
+        <li><strong>Each turn = 3 months (one quarter)</strong> of company operations</li>
+        <li><strong>Make 3 decisions per turn</strong> — one from each category:
+          <ul>
+            <li><span class="highlight">Operations</span>: Infrastructure & support staff</li>
+            <li><span class="highlight">Marketing</span>: Growing your fanbase & revenue</li>
+            <li><span class="highlight">Player Focus</span>: Training & team culture</li>
+          </ul>
+        </li>
+        <li><strong>Your team competes in a tournament each turn</strong> — win probability depends on TSR & morale</li>
+        <li><strong>Manage your finances</strong> — balance expenses with tournament prizes and sponsorships</li>
+        <li><strong>Survive 8 turns</strong> without running out of money or losing player morale</li>
+        <li><strong>Maximize your final score</strong> based on team rank, profit, and fanbase</li>
+      </ol>
 
-    <div class="card" id="intro">
-      <h2>Opening Scenario</h2>
-      <p>You are <b>Manager X</b>, the founder of a brand-new esports organization competing in the national league. Your team just qualified for the <b>Rookie Tier (Tier 3)</b> after a surprising run through open qualifiers. Sponsors are starting to notice, fans are trickling in, and you’ve secured $250,000 in seed funding to kick off your first competitive season.</p>
-      <p>Your mission is to lead your organization through <b>8 turns (2 years)</b> of strategic decisions—balancing <b>team performance</b>, <b>player morale</b>, and <b>financial stability</b>. Each turn, you’ll make three key choices: <b>Operations</b>, <b>Marketing</b>, and <b>Player Focus</b>.</p>
-      <p>Win tournaments to climb divisions, grow your fan base, and earn sponsorships—but beware of burnout, debt, and unhappy players!</p>
-    </div>
+      <h3>📊 Key Terms & Metrics</h3>
+      
+      <div class="term">
+        <strong>Cash Reserves:</strong> Your available money. You start with $250,000. If you go negative for 2 turns in a row, you declare bankruptcy and lose!
+      </div>
+      
+      <div class="term">
+        <strong>Salaries (Fixed Costs):</strong> Money you pay your team every turn. Starts at $30,000/turn and increases if you hire more staff (like analysts).
+      </div>
+      
+      <div class="term">
+        <strong>TSR (Team Skill Rating):</strong> How good your players are at competing (0-100 scale). Higher TSR = better win probability & tournament prizes. Improves through training and analysts.
+      </div>
+      
+      <div class="term">
+        <strong>Morale:</strong> How happy your players are (0-100 scale). Affects tournament performance. If morale hits 0, your players quit and you lose! Balance training intensity with team bonding.
+      </div>
+      
+      <div class="term">
+        <strong>Fans:</strong> Your fanbase size. More fans = promotion requirements met faster. Fans grow through marketing, tournaments, and winning.
+      </div>
+      
+      <div class="term">
+        <strong>Rank (Tier):</strong> Your team's competitive tier based on TSR and fanbase:
+        <ul>
+          <li><strong>Tier 3 (Rookie):</strong> Starting teams, TSR < 70, $20K prize when you win</li>
+          <li><strong>Tier 2 (Challenger):</strong> Mid-level teams, TSR 70-79, $35K prize when you win</li>
+          <li><strong>Tier 1 (Elite):</strong> Top-tier teams, TSR 80+, $60K prize when you win</li>
+        </ul>
+      </div>
 
-    <div class="card">
-      <h2>Understanding TSR (Team Skill Rating)</h2>
-      <p><b>Team Skill Rating (TSR)</b> represents your team’s overall performance potential. It combines the players’ individual skill, coaching quality, and strategic coordination into a single value from <b>0 to 100</b>.</p>
+      <h3>💡 Strategy Tips</h3>
       <ul>
-        <li>A higher TSR increases your probability of winning matches and earning prize money.</li>
-        <li>Hiring analysts, training camps, and strong morale can raise TSR.</li>
-        <li>Neglecting training, ignoring morale, or losing staff may reduce TSR over time.</li>
+        <li><strong>Win tournaments early!</strong> Prize money is your main income source. Build TSR fast.</li>
+        <li><strong>Watch your fixed costs:</strong> Every analyst you hire costs $5,000/turn forever.</li>
+        <li><strong>TSR vs Morale trade-offs:</strong> Both affect win probability - find the right balance.</li>
+        <li><strong>Losing hurts:</strong> You lose 5% of fans and pay a $10K penalty when you lose tournaments.</li>
+        <li><strong>Sponsorships scale with rank:</strong> Elite teams get $30K/turn base, Rookies only get $9K/turn.</li>
+        <li><strong>Avoid bankruptcy:</strong> Going below $0 for 2 turns = game over!</li>
       </ul>
-    </div>
 
-    <div class="card" id="scenario">
-      <h2>Turn 1: A New Season Dawns</h2>
-      <p>Your team officially enters the Spring Split. The players are optimistic but nervous about competing against established organizations. You must make three strategic choices to set the tone for your debut season.</p>
-
-      <h3>1️⃣ Operations Decision</h3>
+      <h3>🏆 Winning the Game</h3>
+      <p>Your final score is based on:</p>
       <ul>
-        <li><b>Hire an Analyst ($20K)</b> – Boost TSR by +5, but increase expenses by $5K per quarter.</li>
-        <li><b>Upgrade Team House ($40K)</b> – Increase morale by +10 and gain +500 fans.</li>
-        <li><b>Stay Lean ($0)</b> – Save money, but risk stagnation (TSR −2).</li>
+        <li><strong>40% Team Rank</strong> (Tier 1 = best score)</li>
+        <li><strong>40% Profit</strong> (Ending cash minus starting $250K)</li>
+        <li><strong>20% Fanbase</strong> (More fans = better score)</li>
       </ul>
 
-      <h3>2️⃣ Marketing Decision</h3>
-      <ul>
-        <li><b>Launch Fan Merch ($25K)</b> – Gain +1K fans and +$10K next turn.</li>
-        <li><b>Host a Local Tournament ($30K)</b> – Gain +2K fans and morale +5.</li>
-        <li><b>Minimal Social Media ($0)</b> – Save money, no growth (flat fans).</li>
-      </ul>
-
-      <h3>3️⃣ Player Focus Decision</h3>
-      <ul>
-        <li><b>Intense Bootcamp</b> – TSR +8, morale −10.</li>
-        <li><b>Team Bonding Retreat ($10K)</b> – Morale +10, TSR −3.</li>
-        <li><b>Balanced Schedule</b> – TSR +2, morale +2.</li>
-      </ul>
-
-      <button id="btnStart">Start Simulation</button>
-    </div>
-
-    <div class="card" id="game" style="display:none">
-      <h2>Season Control</h2>
-      <div id="status" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:12px"></div>
-      <div id="scenarioBox" class="event"></div>
-      <form id="choices" style="margin-top:10px">
-        <h3>Decisions (pick one in each category)</h3>
-        <fieldset class="card" style="padding:12px">
-          <legend>1) Operations</legend>
-          <label><input type="radio" name="ops" value="analyst"> Hire an Analyst ($20K) — TSR +5; Fixed +$5K/turn</label><br>
-          <label><input type="radio" name="ops" value="house"> Upgrade Team House ($40K) — Morale +10; Fans +500</label><br>
-          <label><input type="radio" name="ops" value="lean"> Stay Lean ($0) — TSR −2</label>
-        </fieldset>
-        <fieldset class="card" style="padding:12px">
-          <legend>2) Marketing</legend>
-          <label><input type="radio" name="mkt" value="merch"> Launch Fan Merch ($25K) — +1K fans; +$10K next turn</label><br>
-          <label><input type="radio" name="mkt" value="local"> Host Local Tournament ($30K) — +2K fans; Morale +5</label><br>
-          <label><input type="radio" name="mkt" value="minimal"> Minimal Social ($0) — flat fans</label>
-        </fieldset>
-        <fieldset class="card" style="padding:12px">
-          <legend>3) Player Focus</legend>
-          <label><input type="radio" name="ply" value="bootcamp"> Intense Bootcamp ($0) — TSR +8; Morale −10</label><br>
-          <label><input type="radio" name="ply" value="retreat"> Team Bonding Retreat ($10K) — Morale +10; TSR −3</label><br>
-          <label><input type="radio" name="ply" value="balanced"> Balanced Schedule ($0) — TSR +2; Morale +2</label>
-        </fieldset>
-        <button type="button" id="btnRun">Confirm Decisions & Run Turn</button>
-      </form>
-      <h3 style="margin-top:16px">Turn Log</h3>
-      <pre id="log" style="white-space:pre-wrap"></pre>
-    </div>
-
-    <div class="card" id="output" style="display:none">
-      <h2>Simulation Results</h2>
-      <pre id="final"></pre>
-      <button id=\"btnPDF\">Save Final Report (PDF)</button>
-      <button id=\"btnContinue\">Continue Season (+8 turns)</button>
+      <div class="row" style="justify-content:center;margin-top:20px">
+        <button class="btn primary" id="btnStartGame"><b>Got It! Start Playing →</b></button>
+      </div>
+      
+      <p class="muted" style="text-align:center;margin-top:12px;font-size:13px">
+        You can review the glossary anytime by clicking "View Glossary" in the sidebar
+      </p>
     </div>
   </div>
 
+  <div class="wrap">
+    <header>
+      <div class="row">
+        <h1>Esports Company Management Simulation</h1>
+        <span class="badge">Manager X · 8 Turns · Local‑only</span>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="btnHelp">📚 Tutorial</button>
+        <button class="btn ghost" id="btnSave">Save</button>
+        <button class="btn ghost" id="btnLoad">Load</button>
+        <button class="btn" id="btnReset">Reset</button>
+        <button class="btn" id="btnPrint">Print</button>
+      </div>
+      <div class="row" id="nameRow" style="gap:8px;align-items:center">
+        <label class="label" for="studentName">Student Name</label>
+        <input id="studentName" type="text" placeholder="Enter your name" style="min-width:240px;padding:8px;background:#0e1530;border:1px solid var(--line);border-radius:8px;color:var(--ink)" />
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="left">
+        <div class="section-title">Scenario</div>
+        <div id="scenario" class="notice" aria-live="polite"></div>
+
+        <div class="divider"></div>
+        <div class="section-title">Decisions (pick 1 in each category)</div>
+
+        <form id="choices" class="opts">
+          <fieldset class="card" style="padding:12px;border:none">
+            <legend class="label">1) Operations <span class="help-icon" title="Infrastructure and support staff decisions">?</span></legend>
+            <label class="opt"><input type="radio" name="ops" value="analyst"> <div><b>Hire an Analyst ($20,000)</b><br><span class="muted">TSR +5 this turn; ongoing salaries +$5,000/turn. Analysts improve team skill but increase fixed costs.</span></div></label>
+            <label class="opt"><input type="radio" name="ops" value="house"> <div><b>Upgrade Team House ($40,000)</b><br><span class="muted">Morale +10; Fans +500. Better facilities make players happier and attract new fans.</span></div></label>
+            <label class="opt"><input type="radio" name="ops" value="lean"> <div><b>Stay Lean ($0)</b><br><span class="muted">No spend; risk stagnation (TSR −2). Save cash but fall behind in training quality.</span></div></label>
+          </fieldset>
+
+          <fieldset class="card" style="padding:12px;border:none">
+            <legend class="label">2) Marketing <span class="help-icon" title="Growing your fanbase and revenue streams">?</span></legend>
+            <label class="opt"><input type="radio" name="mkt" value="merch"> <div><b>Launch Fan Merch ($25,000)</b><br><span class="muted">+1,000 fans now; +$10,000 next turn. Upfront investment that pays back through merchandise sales.</span></div></label>
+            <label class="opt"><input type="radio" name="mkt" value="local"> <div><b>Host Local Tournament ($30,000)</b><br><span class="muted">+2,000 fans; Morale +5. Community events grow your brand and energize the team.</span></div></label>
+            <label class="opt"><input type="radio" name="mkt" value="minimal"> <div><b>Minimal Social ($0)</b><br><span class="muted">Save cash; fan growth flat. Maintain current audience without new marketing spend.</span></div></label>
+          </fieldset>
+
+          <fieldset class="card" style="padding:12px;border:none">
+            <legend class="label">3) Player Focus <span class="help-icon" title="Training intensity vs team culture balance">?</span></legend>
+            <label class="opt"><input type="radio" name="ply" value="bootcamp"> <div><b>Intense Training Bootcamp ($0)</b><br><span class="muted">TSR +8; Morale −10. Grueling practice improves skills but burns out players.</span></div></label>
+            <label class="opt"><input type="radio" name="ply" value="retreat"> <div><b>Team Bonding Retreat ($10,000)</b><br><span class="muted">Morale +10; TSR −3. Build team chemistry at the cost of practice time.</span></div></label>
+            <label class="opt"><input type="radio" name="ply" value="balanced"> <div><b>Balanced Schedule ($0)</b><br><span class="muted">TSR +2; Morale +2. Steady improvement in both areas without extremes.</span></div></label>
+          </fieldset>
+        </form>
+
+        <div class="row end" style="margin-top:10px">
+          <button class="btn primary" id="btnConfirm"><b>Confirm Decisions & Run Turn</b></button>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-title">Turn Log</div>
+        <div id="log" class="log" aria-live="polite"></div>
+      </section>
+
+      <aside class="card" id="right">
+        <div class="section-title">Status</div>
+        <div class="stats" id="stats"></div>
+        
+        <div class="divider"></div>
+        <details>
+          <summary>📖 View Glossary</summary>
+          <div style="margin-top:12px;font-size:14px">
+            <p><strong>Cash:</strong> Available money. Start: $250K. Bankruptcy if negative for 2 turns.</p>
+            <p><strong>Salaries:</strong> Fixed costs paid each turn. Start: $30K/turn.</p>
+            <p><strong>TSR:</strong> Team Skill Rating (0-100). Higher = better win chance & tournament prizes.</p>
+            <p><strong>Morale:</strong> Player happiness (0-100). Affects performance. Reaches 0 = players quit = game over.</p>
+            <p><strong>Fans:</strong> Fanbase size. Required for rank promotions (7K for Tier 2, 12K for Tier 1).</p>
+            <p><strong>Rank:</strong> Tier 3 (Rookie, $20K prize) → Tier 2 (Challenger, $35K) → Tier 1 (Elite, $60K)</p>
+            <p><strong>Tournaments:</strong> Each turn has a tournament. Win = prize money + fans. Lose = penalty − fans.</p>
+          </div>
+        </details>
+        
+        <div class="divider"></div>
+        <div class="section-title">Quick Reference</div>
+        <ul class="muted" style="margin-top:0;font-size:14px">
+          <li>Game is 8 turns (2 years; 1 turn = quarter).</li>
+          <li>Pick <b>one</b> option per category each turn.</li>
+          <li>Every turn: tournament competition for prizes!</li>
+          <li>Win probability = (TSR × Morale%) ÷ opponent strength</li>
+          <li>Fixed expenses (salaries + travel) deducted each turn.</li>
+          <li>Balance spending, training, and team happiness!</li>
+        </ul>
+        
+        <div class="divider"></div>
+        <details>
+          <summary>🎯 How Scoring Works</summary>
+          <p class="muted" style="margin-top:8px">Final Score is based on <b>Rank</b> (40%), <b>Profit</b> (40%), and <b>Fans</b> (20%). 
+          <br><br>Rank points: Tier 1 = 100, Tier 2 = 60, Tier 3 = 30. 
+          <br>Profit = ending cash minus $250K starting cash. 
+          <br>Aim for Tier 1 rank with positive profit!</p>
+        </details>
+      </aside>
+    </div>
+
+    <p class="footer">Made for classrooms · No logins · No servers · <span class="kbd">Ctrl/Cmd+S</span> to save this file after playing</p>
+  </div>
+
   <script>
-  (()=>{
-    const $ = s=>document.querySelector(s)
-    const $$ = s=>Array.from(document.querySelectorAll(s))
-
-    const $intro = $('#intro')
-    const $game = $('#game')
-    const $status = $('#status')
-    const $scenarioBox = $('#scenarioBox')
-    const $log = $('#log')
-    const $final = $('#final')
-    const $output = $('#output')
-
-    const fmt = n=>`$${Number(n).toLocaleString()}`
-    const clamp=(v,min,max)=>Math.max(min,Math.min(max,v))
-    const rankName=t=>t===1?'Tier 1 (Elite)':t===2?'Tier 2 (Challenger)':'Tier 3 (Rookie)'
-
-    const START = {
-      turn:1, turnsTotal:8,
-      cash:250000, salaries:30000,
-      fans:5000, tsr:60, morale:70, rank:3,
-      analysts:0, merchNext:0, negCashStreak:0, streak:0,
-      name:'' , history:[]
+  ;(() => {
+    const STARTING = {
+      turn: 1,
+      turnsTotal: 8,
+      cash: 250000,
+      salaries: 30000,
+      fans: 5000,
+      tsr: 60,
+      morale: 70,
+      rank: 3,
+      analysts: 0,
+      merchPayoutNext: 0,
+      negCashStreak: 0,
+      history: [],
+      name: '',
+      seenTutorial: false
     }
-    let S = JSON.parse(JSON.stringify(START))
 
-    function setName(){ S.name = ($('#studentName').value||'').trim() }
+    let S = JSON.parse(JSON.stringify(STARTING))
 
-    function scenarioText(){
-      if (S.turn===1) return 'Turn 1 — A New Season Dawns: Sponsors are watching; players are hungry. Set your tone.'
-      const flavors=[
-        'Scrim results leaked; expectations spike.',
-        'Rival signs a star; pressure rises.',
-        'Patch shakes the meta; adapt fast.',
-        'Travel snafus test leadership.',
-        'Viral clip boosts visibility.',
-        'Analysts call you a dark horse.'
-      ]
-      const i=(S.turn+S.fans+S.tsr)%flavors.length
-      return `Turn ${S.turn} — ${flavors[i]}`
-    }
+    const el = id => document.getElementById(id)
+    const $stats = el('stats')
+    const $scenario = el('scenario')
+    const $log = el('log')
+    const $name = el('studentName')
+    const $modal = el('tutorialModal')
+
+    const fmtMoney = n => `$${n.toLocaleString()}`
+    const clamp = (v,min,max) => Math.max(min, Math.min(max, v))
+    const rankName = t => t===1? 'Tier 1 (Elite)' : t===2? 'Tier 2 (Challenger)' : 'Tier 3 (Rookie)'
 
     function render(){
-      $status.innerHTML = [
-        ['Turn',`${S.turn} / ${S.turnsTotal}`],
-        ['Cash',fmt(S.cash)],
-        ['Fixed Expenses',fmt(S.salaries)+'/turn'],
-        ['Fans',S.fans.toLocaleString()],
-        ['TSR',`${S.tsr} / 100`],
-        ['Morale',`${S.morale} / 100`],
-        ['Rank',rankName(S.rank)],
-        ['Analysts',String(S.analysts)]
-      ].map(([k,v])=>`<div class="card"><b>${k}</b><div>${v}</div></div>`).join('')
-      $scenarioBox.textContent = scenarioText()
+      const yr = Math.floor((S.turn-1) / 4) + 1
+      const qtr = ((S.turn-1) % 4) + 1
+      const desc = `Year ${yr}, Quarter ${qtr} (Turn ${S.turn} / ${S.turnsTotal})`
+
+      $scenario.innerHTML = `
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <b>${desc}</b>
+          <span class="pill">💰 ${fmtMoney(S.cash)}</span>
+          <span class="pill">👥 ${S.fans.toLocaleString()} fans</span>
+          <span class="pill">🏆 ${rankName(S.rank)}</span>
+        </div>
+        <p style="margin-top:8px;font-size:14px" class="muted">Make your three decisions below, then click <b>Confirm Decisions</b> to run the tournament and advance to the next quarter.</p>
+      `
+
+      const stat = (key,val,note) => `<div class="stat"><b>${key}</b><div style="font-size:20px;margin:4px 0">${val}</div>${note?`<div class="muted" style="font-size:12px">${note}</div>`:''}</div>`
+
+      $stats.innerHTML = `
+        ${stat('Cash', fmtMoney(S.cash), S.cash < 0 ? '<span class="badtext">⚠ Negative!</span>' : '')}
+        ${stat('Salaries / turn', fmtMoney(S.salaries))}
+        ${stat('Fans', S.fans.toLocaleString())}
+        ${stat('TSR', S.tsr, 'Team Skill Rating')}
+        ${stat('Morale', S.morale, S.morale < 30 ? '<span class="warntext">⚠ Low!</span>' : '')}
+        ${stat('Rank', rankName(S.rank))}
+      `
     }
 
-    function appendLog(lines){ const t=Array.isArray(lines)?lines.join('
-'):String(lines); $log.textContent=(t+'
-'+$log.textContent).trim() }
-
-    function opponentDifficulty(){
-      const base=(S.rank===3?65:S.rank===2?75:85)
-      const adapt=Math.min(8,Math.max(-8,(S.streak||0)*2))
-      const jitter=Math.floor(Math.random()*11)-5
-      return Math.max(40, base+adapt+jitter)
+    function appendLog(lines){
+      const arr = Array.isArray(lines) ? lines : [lines]
+      arr.forEach(ln => {
+        const div = document.createElement('div')
+        div.textContent = ln
+        div.style.margin = '4px 0'
+        $log.appendChild(div)
+      })
+      $log.scrollTop = $log.scrollHeight
     }
-    function winP(){ const opp=opponentDifficulty(); const m=S.morale/100; return clamp((S.tsr*m)/opp,0.05,0.95) }
 
-    function academicFeedback(pl,tot){
-      const {revenue,expenses,fixed,variable}=tot
-      if (pl<0 && revenue<fixed) return 'Your revenue did not reach the break‑even point; fixed costs exceeded contribution margin.'
-      if (pl<0 && variable>fixed) return 'High variable costs eroded margins this turn; tighten discretionary spending.'
-      if (pl>=0 && revenue>expenses) return 'Positive contribution margin covered fixed costs and produced profit—well managed.'
-      if (pl<0) return 'A net loss increased liabilities pressure; consider boosting sponsorship assets or cutting costs.'
+    function getChoice(cat){
+      const radio = document.querySelector(`input[name="${cat}"]:checked`)
+      return radio ? radio.value : null
+    }
+
+    function clearChoices(){
+      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false)
+    }
+
+    function winProbability(){
+      const baseOpponent = 60
+      const moraleMultiplier = S.morale / 100
+      let p = (S.tsr * moraleMultiplier) / baseOpponent
+      return clamp(p, 0.05, 0.95)
+    }
+
+    function academicFeedback(pl, totals){
+      const { revenue, expenses, fixed, variable } = totals
+      if (pl < 0 && revenue < fixed) return 'Your revenue did not reach the break‑even point; fixed costs exceeded contribution margin.'
+      if (pl < 0 && variable > fixed) return 'High variable costs eroded margins this turn; tighten discretionary spending.'
+      if (pl >= 0 && revenue > expenses) return 'Positive contribution margin covered fixed costs and produced profit—well managed.'
+      if (pl < 0) return 'A net loss increased liabilities pressure; consider boosting sponsorship assets or cutting costs.'
       return 'Stable performance with costs under control; maintain assets that drive recurring revenue.'
     }
 
-    function applyDecisions(ops,mkt,ply){
-      let log=[]
-      // Mini-event
-      const minis=[
-        ()=>{S.morale+=3;return '🎉 Team birthday boosts vibes. Morale +3.'},
-        ()=>{S.fans+=200;return '📹 BTS vlog pops off. Fans +200.'},
-        ()=>{S.tsr-=2;return '🛠️ Patch hotfix nerfs your comp slightly. TSR −2.'},
-        ()=>{return '📰 Local feature on your rookie raises hype.'}
-      ]
-      log.push(minis[Math.floor(Math.random()*minis.length)]())
+    function applyDecisions(ops, mkt, ply){
+      let log = []
 
-      let variable=0
-      // Ops
-      if(ops==='analyst'){variable+=20000; S.tsr+=5; S.salaries+=5000; S.analysts++; log.push('⚙️ Hired Analyst (Var −$20K; Fixed +$5K/turn; TSR +5).')}
-      else if(ops==='house'){variable+=40000; S.morale+=10; S.fans+=500; log.push('🏠 Upgraded Team House (Var −$40K; Morale +10; Fans +500).')}
-      else if(ops==='lean'){S.tsr-=2; log.push('🧮 Stayed Lean (TSR −2).')}
+      // ===== FIXED BUG: Apply merch payout from PREVIOUS turn FIRST =====
+      const merchSales = S.merchPayoutNext
+      S.merchPayoutNext = 0
+
+      let variableCosts = 0
+
+      // Operations
+      if (ops === 'analyst'){
+        variableCosts += 20000
+        S.tsr += 5
+        S.salaries += 5000
+        S.analysts += 1
+        log.push('Operations: Hired an Analyst (Variable −$20,000; Fixed +$5,000/turn; TSR +5).')
+      } else if (ops === 'house'){
+        variableCosts += 40000
+        S.morale += 10
+        S.fans += 500
+        log.push('Operations: Upgraded Team House (Variable −$40,000; Morale +10; Fans +500).')
+      } else if (ops === 'lean'){
+        S.tsr -= 2
+        log.push('Operations: Stayed Lean (no spend; TSR −2).')
+      }
 
       // Marketing
-      if(mkt==='merch'){variable+=25000; S.fans+=1000; S.merchNext+=10000; log.push('🛍️ Merch drop (Var −$25K; +1K Fans; +$10K next turn).')}
-      else if(mkt==='local'){variable+=30000; S.fans+=2000; S.morale+=5; log.push('🎪 Local Tournament (Var −$30K; +2K Fans; Morale +5).')}
-      else if(mkt==='minimal'){log.push('📣 Minimal Social (no spend).')}
-
-      // Player focus
-      if(ply==='bootcamp'){S.tsr+=8; S.morale-=10; log.push('💪 Bootcamp (TSR +8; Morale −10).')}
-      else if(ply==='retreat'){variable+=10000; S.morale+=10; S.tsr-=3; log.push('🌲 Retreat (Var −$10K; Morale +10; TSR −3).')}
-      else if(ply==='balanced'){S.tsr+=2; S.morale+=2; log.push('⚖️ Balanced (TSR +2; Morale +2).')}
-
-      S.tsr=clamp(Math.round(S.tsr),0,100)
-      S.morale=clamp(Math.round(S.morale),0,100)
-
-      // Competitive
-      const p = winP(); const win = Math.random()<p
-      if(win){ S.streak=(S.streak||0)+1 } else { S.streak=0 }
-      const prizeTable={1:60000,2:35000,3:20000}
-      let prize = win ? prizeTable[S.rank] : 0
-      if(win){ S.fans+=1500; confetti(24); log.push(`🏆 WIN (p=${(p*100).toFixed(1)}%). Prize ${fmt(prize)}, Fans +1,500.`) }
-      else { variable+=10000; const before=S.fans; S.fans=Math.max(0,Math.round(S.fans*0.95)); log.push(`💔 LOSS (p=${(p*100).toFixed(1)}%). Sponsor penalty −$10,000; Fans ${before.toLocaleString()} → ${S.fans.toLocaleString()} (−5%).`) }
-
-      // Finance
-      const sponsorships = Math.round((S.rank===1?30000:S.rank===2?18000:9000)+Math.max(0,S.tsr-50)*120)
-      const merch = S.merchNext; S.merchNext=0
-      const fixed = S.salaries
-      const travel=5000; variable+=travel
-      const revenue = sponsorships + merch + prize
-      const expenses = fixed + variable
-      const pl = revenue - expenses
-      S.cash += pl
-
-      // Rank momentum
-      let promoted=false, demoted=false
-      if(S.rank===3 && S.tsr>=70 && S.fans>=7000){S.rank=2; promoted=true}
-      else if(S.rank===2 && S.tsr>=80 && S.fans>=12000){S.rank=1; promoted=true}
-      else if(S.tsr<=50 && S.morale<=40 && S.fans<5000 && S.rank<3){S.rank=3; demoted=true}
-      if(promoted) log.push('🚀 Rank update: Promoted!')
-      if(demoted) log.push('📉 Rank update: Demoted.')
-
-      const fb = academicFeedback(pl,{revenue,expenses,fixed,variable})
-      log.push('FINANCE SUMMARY — shown this turn:')
-      log.push(`  Total Revenue = Sponsorships (${fmt(sponsorships)}) + Merch Sales (${fmt(merch)}) + Prize Money (${fmt(prize)}) = ${fmt(revenue)}`)
-      log.push(`  Total Expenses = Fixed (${fmt(fixed)}) + Variable (${fmt(variable)}) = ${fmt(expenses)}`)
-      log.push(`  Profit/Loss (P/L) = ${fmt(revenue)} − ${fmt(expenses)} = ${fmt(pl)}`)
-      log.push(`  Updated Cash Reserves: ${fmt(S.cash)}`)
-      log.push(`Academic Feedback: ${fb}`)
-
-      S.history.push({turn:S.turn,cash:S.cash,salaries:S.salaries,fans:S.fans,tsr:S.tsr,morale:S.morale,rank:S.rank,revenue:{sponsorships: sponsorships, merchSales: merch, prizeMoney: prize},expenses:{fixed,variable},pl})
-
-      appendLog([`Turn ${S.turn} summary:`,...log,'—'.repeat(50)])
-
-      // Game Over checks
-      if(S.cash<0) S.negCashStreak=(S.negCashStreak||0)+1; else S.negCashStreak=0
-      if(S.negCashStreak>=2){ return gameOver('Financial Ruin','Cash reserves were below $0 for two consecutive turns.') }
-      if(S.morale<=0){ return gameOver('Mutiny','Player morale fell to 0. The roster refuses to compete.') }
-    }
-
-    function gameOver(reason,detail){
-      $intro.style.display='none'; $game.style.display='none'; $output.style.display='block'
-      $final.textContent = `GAME OVER — ${reason}
-${detail}
-Final Cash: ${fmt(S.cash)}
-Fans: ${S.fans.toLocaleString()}
-Rank: ${rankName(S.rank)}
-Turns played: ${S.turn} / ${S.turnsTotal}`
-      bindEndButtons()
-    }
-
-    function finishSeason(){
-      // Final scoring per weights: Rank 40%, Profit 40%, Fans 20%
-      const endingCash=S.cash, endingRank=S.rank, endingFans=S.fans
-      const profit=endingCash-START.cash
-      const rankSub=(endingRank===1?100:endingRank===2?60:30)
-      const profitSub=(()=>{const min=-100000,max=200000; const pct=(profit-min)/(max-min); return clamp(Math.round(pct*100),0,100)})()
-      const fanSub=clamp(Math.round((endingFans/20000)*100),0,100)
-      const finalScore=Math.round(rankSub*0.40 + profitSub*0.40 + fanSub*0.20)
-
-      const avoidedRuin=(S.negCashStreak||0)<2 && !(endingCash<0)
-      const balanced=(S.tsr>=60 && S.morale>=60) || (profit>0 && endingRank<=2)
-      const profitable=profit>0
-      const a=avoidedRuin?'You avoided financial ruin':'You flirted with financial ruin'
-      const b=balanced?'balanced short‑term performance with long‑term capability building':'over‑weighted either short‑term pushes or long‑term investments'
-      const c=profitable?'your revenues exceeded expenses to produce profit':'expenses outpaced revenues, resulting in a loss'
-      const assess=`${a}, ${b}, and ${c}. Consider how fixed costs (salaries) and variable decisions (marketing, travel, retreats) influenced contribution margin and your path to break‑even.`
-
-      $intro.style.display='none'; $game.style.display='none'; $output.style.display='block'
-      const student = (S.name&&S.name.trim())?S.name.trim():'Manager X'
-      $final.textContent = `STOP the turn‑based simulation. End of Turn ${S.turnsTotal}.
-
-Student: ${student}
-Final Cash: ${fmt(endingCash)}
-Final Team Rank: ${rankName(endingRank)}
-Final Fan Base: ${endingFans.toLocaleString()} followers
-
-Score Breakdown (out of 100)
-  Rank (40%): ${rankSub} -> ${(rankSub*0.40).toFixed(1)}
-  Profit (40%): ${profitSub} -> ${(profitSub*0.40).toFixed(1)}
-  Fans (20%): ${fanSub} -> ${(fanSub*0.20).toFixed(1)}
-
-Final Score: ${finalScore} / 100
-
-Final Assessment:
-${assess}`
-      bindEndButtons()
-    }
-
-    function bindEndButtons(){
-      $('#btnPDF')?.addEventListener('click',()=>window.print())
-      $('#btnContinue')?.addEventListener('click',()=>{
-        S.turnsTotal += 8
-        $output.style.display='none'
-        $game.style.display='block'
-        $('#choices')?.reset()
-        appendLog('Season extended: +8 turns added. Make your next set of decisions!')
-        render()
-        // re-enable run button for continued weekly interaction
-        const runBtn = document.getElementById('btnRun');
-        if (runBtn) runBtn.disabled = false
-      })
-    })
-    }
-
-    function confetti(n=20){
-      const c=document.createElement('div'); c.style.position='fixed'; c.style.left=0; c.style.top=0; c.style.pointerEvents='none'; c.style.width='100vw'; c.style.height=0; document.body.appendChild(c)
-      for(let i=0;i<n;i++){
-        const s=document.createElement('div'); s.textContent=['🎉','✨','💥','🌟'][i%4]; s.style.position='absolute'; s.style.left=Math.random()*100+'vw'; s.style.top='-10px'; s.style.fontSize=(12+Math.random()*18)+'px'; s.style.animation=`fall ${2+Math.random()*2}s linear forwards`; c.appendChild(s); setTimeout(()=>s.remove(),4000)
+      if (mkt === 'merch'){
+        variableCosts += 25000
+        S.fans += 1000
+        S.merchPayoutNext = 10000
+        log.push('Marketing: Launched Merch (Variable −$25,000; +1,000 Fans; +$10,000 merch revenue will arrive NEXT turn).')
+      } else if (mkt === 'local'){
+        variableCosts += 30000
+        S.fans += 2000
+        S.morale += 5
+        log.push('Marketing: Hosted Local Tournament (Variable −$30,000; +2,000 Fans; Morale +5).')
+      } else if (mkt === 'minimal'){
+        log.push('Marketing: Minimal Social (no variable spend).')
       }
-      setTimeout(()=>c.remove(),4200)
+
+      // Player Focus
+      if (ply === 'bootcamp'){
+        S.tsr += 8
+        S.morale -= 10
+        log.push('Player Focus: Intense Bootcamp (TSR +8; Morale −10).')
+      } else if (ply === 'retreat'){
+        variableCosts += 10000
+        S.morale += 10
+        S.tsr -= 3
+        log.push('Player Focus: Team Retreat (Variable −$10,000; Morale +10; TSR −3).')
+      } else if (ply === 'balanced'){
+        S.tsr += 2
+        S.morale += 2
+        log.push('Player Focus: Balanced Schedule (TSR +2; Morale +2).')
+      }
+
+      S.tsr = clamp(Math.round(S.tsr), 0, 100)
+      S.morale = clamp(Math.round(S.morale), 0, 100)
+
+      // Tournament
+      const pWin = winProbability()
+      const didWin = Math.random() < pWin
+      const prizeTable = {1: 60000, 2: 35000, 3: 20000}
+      let prizeMoney = didWin ? prizeTable[S.rank] : 0
+
+      if (didWin){
+        S.fans += 1500
+        log.push(`Tournament outcome: WIN (p=${(pWin*100).toFixed(1)}%). Prize ${fmtMoney(prizeMoney)}, Fans +1,500.`)
+      } else {
+        variableCosts += 10000
+        const fansBefore = S.fans
+        S.fans = Math.max(0, Math.round(S.fans * 0.95))
+        log.push(`Tournament outcome: LOSS (p=${(pWin*100).toFixed(1)}%). Sponsor penalty −$10,000; Fans ${fansBefore.toLocaleString()} → ${S.fans.toLocaleString()} (−5%).`)
+      }
+
+      // Financial calculation
+      const sponsorships = Math.round((S.rank === 1 ? 30000 : S.rank === 2 ? 18000 : 9000) + Math.max(0, S.tsr - 50) * 120)
+      const fixedExpenses = S.salaries
+      const travel = 5000
+      variableCosts += travel
+
+      const totalRevenue = sponsorships + merchSales + prizeMoney
+      const totalExpenses = fixedExpenses + variableCosts
+      const profitLoss = totalRevenue - totalExpenses
+
+      S.cash += profitLoss
+
+      // Rank updates
+      let promoted = false, demoted = false
+      if (S.rank === 3 && S.tsr >= 70 && S.fans >= 7000){ S.rank = 2; promoted = true }
+      else if (S.rank === 2 && S.tsr >= 80 && S.fans >= 12000){ S.rank = 1; promoted = true }
+      else if (S.tsr <= 50 && S.morale <= 40 && S.fans < 5000 && S.rank < 3){ S.rank = 3; demoted = true }
+      if (promoted) log.push(`Rank update: Promoted to ${rankName(S.rank)}!`)
+      if (demoted) log.push(`Rank update: Demoted to ${rankName(S.rank)}.`)
+
+      const fb = academicFeedback(profitLoss, {
+        revenue: totalRevenue,
+        expenses: totalExpenses,
+        fixed: fixedExpenses,
+        variable: variableCosts
+      })
+
+      log.push(
+        `Revenue: Sponsorships ${fmtMoney(sponsorships)} + Prize ${fmtMoney(prizeMoney)} + Merch ${fmtMoney(merchSales)} = ${fmtMoney(totalRevenue)}`,
+        `Expenses: Fixed ${fmtMoney(fixedExpenses)} + Variable ${fmtMoney(variableCosts)} = ${fmtMoney(totalExpenses)}`,
+        `Turn Net: ${profitLoss >= 0 ? '+' : ''}${fmtMoney(profitLoss)}`,
+        `Cash: ${fmtMoney(S.cash)} • TSR: ${S.tsr} • Morale: ${S.morale} • Fans: ${S.fans.toLocaleString()}`,
+        `💡 ${fb}`
+      )
+
+      appendLog(log)
+
+      // Failure checks
+      if (S.cash < 0) S.negCashStreak = (S.negCashStreak||0) + 1; else S.negCashStreak = 0
+      if (S.negCashStreak >= 2){
+        gameOver('Financial Ruin', 'Cash reserves were below $0 for two consecutive turns.')
+        return
+      }
+      if (S.morale <= 0){
+        gameOver('Mutiny', 'Player morale fell to 0. The roster refuses to compete.')
+        return
+      }
     }
 
-    // Hook up Start button to transition to full game
-    document.getElementById('btnStart').addEventListener('click',()=>{
-      setName()
-      $intro.style.display='none'
-      $game.style.display='block'
+    function gameOver(reason, detail){
+      const report = `\nGAME OVER — ${reason}\n${detail}\nFinal Cash: ${fmtMoney(S.cash)}\nFans: ${S.fans.toLocaleString()}\nRank: ${rankName(S.rank)}\nTurns played: ${S.turn} / ${S.turnsTotal}`
+      appendLog(report)
+      el('btnConfirm').disabled = true
+      $scenario.innerHTML = `<div class="notice badtext"><b>Game Over:</b> ${reason}. ${detail}</div>`
+    }
+
+    function endIfNeeded(){
+      if (S.turn > S.turnsTotal){
+        const endingCash = S.cash
+        const endingRank = S.rank
+        const endingFans = S.fans
+        const profit = endingCash - STARTING.cash
+
+        const rankSub = (endingRank === 1 ? 100 : endingRank === 2 ? 60 : 30)
+        const profitSub = (function(){
+          const min = -100000, max = 200000
+          const pct = (profit - min) / (max - min)
+          return clamp(Math.round(pct*100), 0, 100)
+        })()
+        const fanSub = clamp(Math.round((endingFans / 20000) * 100), 0, 100)
+
+        const finalScore = Math.round(rankSub*0.40 + profitSub*0.40 + fanSub*0.20)
+
+        function assessment(){
+          const avoidedRuin = (S.negCashStreak||0) < 2 && !(endingCash < 0)
+          const balanced = (S.tsr >= 60 && S.morale >= 60) || (profit > 0 && endingRank <= 2)
+          const profitable = profit > 0
+          const a = avoidedRuin ? 'You avoided financial ruin' : 'You flirted with financial ruin'
+          const b = balanced ? 'balanced short‑term performance with long‑term capability building' : 'over‑weighted either short‑term pushes or long‑term investments'
+          const c = profitable ? 'your revenues exceeded expenses to produce profit' : 'expenses outpaced revenues, resulting in a loss'
+          return `${a}, ${b}, and ${c}. Consider how fixed costs (salaries) and variable decisions (marketing, travel, retreats) influenced contribution margin and your path to break‑even.`
+        }
+
+        const stat = (key,val,note) => `<div class="stat"><b>${key}</b><div style="font-size:20px;margin:4px 0">${val}</div>${note?`<div class="muted" style="font-size:12px">${note}</div>`:''}</div>`
+
+        const screen = `
+          <div class="notice goodtext">
+            <b>🎊 GAME COMPLETE!</b> You have reached the end of Turn 8.
+          </div>
+          <h3>Final Scoring Screen</h3>
+          <div class=\"stats\">
+            ${stat('Student', (S.name && S.name.trim()) ? S.name.trim() : 'Manager X', '')}
+            ${stat('Final Cash Reserves', fmtMoney(endingCash), '')}
+            ${stat('Final Team Rank', rankName(endingRank), '')}
+            ${stat('Final Fan Base', endingFans.toLocaleString() + ' followers', '')}
+          </div>
+          <div class=\"divider\"></div>
+          <div class="section-title">Score Breakdown (out of 100)</div>
+          <div class="stat">Rank Score (40%): ${rankSub} → ×0.40 = ${(rankSub*0.40).toFixed(1)}</div>
+          <div class="stat">Profit Score (40%): ${profitSub} → ×0.40 = ${(profitSub*0.40).toFixed(1)}</div>
+          <div class="stat">Fan Base Score (20%): ${fanSub} → ×0.20 = ${(fanSub*0.20).toFixed(1)}</div>
+          <div class="stat"><b>Final Score</b>: ${finalScore} / 100</div>
+          <div class=\"divider\"></div>
+          <div class="section-title">Final Assessment</div>
+          <p class="muted">${assessment()}</p>
+          <div class=\"divider\"></div>
+          <div class="end"><button id="btnPDF" class="btn good"><b>Save Final Report (PDF)</b></button></div>
+        `
+
+        $scenario.innerHTML = screen
+        const pdfBtn = document.getElementById('btnPDF'); if(pdfBtn){ pdfBtn.addEventListener('click', ()=>window.print()) }
+        appendLog([`\nFINAL VALUES: Cash ${fmtMoney(endingCash)} · Rank ${rankName(endingRank)} · Fans ${endingFans.toLocaleString()}`])
+        el('btnConfirm').disabled = true
+      }
+    }
+
+    // UI events
+    el('btnConfirm').addEventListener('click', () => {
+      if (S.turn > S.turnsTotal){ return }
+      const ops = getChoice('ops')
+      const mkt = getChoice('mkt')
+      const ply = getChoice('ply')
+      if (!ops || !mkt || !ply){
+        alert('Please make exactly one selection in each category (Operations, Marketing, Player Focus).')
+        return
+      }
+      if (!$name || !($name.value || '').trim()){
+        if (!confirm('Proceed without entering a student name? It will show as "Manager X" on the final report.')) return
+        S.name = ''
+      } else {
+        S.name = ($name.value || '').trim()
+      }
+
+      applyDecisions(ops, mkt, ply)
+      clearChoices()
+
+      S.turn += 1
       render()
+      endIfNeeded()
+      saveLocal('autosave', S)
     })
 
-    // Run Turn button
-    document.getElementById('btnRun').addEventListener('click',()=>{
-      setName()
-      const ops=$('input[name=ops]:checked')?.value
-      const mkt=$('input[name=mkt]:checked')?.value
-      const ply=$('input[name=ply]:checked')?.value
-      if(!ops||!mkt||!ply){ alert('Pick one option in each category.'); return }
-
-      applyDecisions(ops,mkt,ply)
-      // advance turn
-      S.turn+=1
-      $('#choices').reset()
+    el('btnReset').addEventListener('click', () => {
+      if (!confirm('Reset game to Turn 1?')) return
+      S = JSON.parse(JSON.stringify(STARTING))
+      S.seenTutorial = true
+      $log.textContent = ''
       render()
-
-      if(S.turn>S.turnsTotal){ finishSeason(); $('#btnRun').disabled=true }
+      el('btnConfirm').disabled = false
+      saveLocal('autosave', S)
     })
+
+    el('btnPrint').addEventListener('click', () => window.print())
+
+    el('btnSave').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'})
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = 'managerx-save.json'
+      a.click()
+      URL.revokeObjectURL(a.href)
+    })
+
+    el('btnLoad').addEventListener('click', () => {
+      const inp = document.createElement('input')
+      inp.type = 'file'
+      inp.accept = '.json,application/json'
+      inp.onchange = () => {
+        const f = inp.files && inp.files[0]
+        if (!f) return
+        const reader = new FileReader()
+        reader.onload = () => {
+          try{
+            const data = JSON.parse(reader.result)
+            Object.assign(S, data)
+            S.seenTutorial = true
+            render()
+            $log.textContent = ''
+            appendLog('Save loaded. Continue your run!')
+          }catch(err){ alert('Could not load save file.') }
+        }
+        reader.readAsText(f)
+      }
+      inp.click()
+    })
+
+    el('btnHelp').addEventListener('click', () => {
+      $modal.style.display = 'flex'
+    })
+
+    el('btnStartGame').addEventListener('click', () => {
+      $modal.style.display = 'none'
+      S.seenTutorial = true
+      saveLocal('autosave', S)
+    })
+
+    function saveLocal(key, obj){ try{ localStorage.setItem(key, JSON.stringify(obj)) }catch(_){} }
+    function loadLocal(key){ try{ return JSON.parse(localStorage.getItem(key)||'null') }catch(_){ return null } }
+
+    const auto = loadLocal('autosave')
+    if (auto && auto.turn && auto.turn <= auto.turnsTotal+1){
+      S = auto
+      appendLog('Autosave loaded. Continue where you left off!')
+      if (!S.seenTutorial){
+        $modal.style.display = 'flex'
+      }
+    } else {
+      appendLog('Welcome, Manager X! Click the Tutorial button if this is your first time playing.')
+      $modal.style.display = 'flex'
+    }
+
+    render()
   })()
   </script>
 </body>
+</html>
 </html>
 
 
