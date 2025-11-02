@@ -76,24 +76,294 @@
       <button id="btnStart">Start Simulation</button>
     </div>
 
+    <div class="card" id="game" style="display:none">
+      <h2>Season Control</h2>
+      <div id="status" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:12px"></div>
+      <div id="scenarioBox" class="event"></div>
+      <form id="choices" style="margin-top:10px">
+        <h3>Decisions (pick one in each category)</h3>
+        <fieldset class="card" style="padding:12px">
+          <legend>1) Operations</legend>
+          <label><input type="radio" name="ops" value="analyst"> Hire an Analyst ($20K) — TSR +5; Fixed +$5K/turn</label><br>
+          <label><input type="radio" name="ops" value="house"> Upgrade Team House ($40K) — Morale +10; Fans +500</label><br>
+          <label><input type="radio" name="ops" value="lean"> Stay Lean ($0) — TSR −2</label>
+        </fieldset>
+        <fieldset class="card" style="padding:12px">
+          <legend>2) Marketing</legend>
+          <label><input type="radio" name="mkt" value="merch"> Launch Fan Merch ($25K) — +1K fans; +$10K next turn</label><br>
+          <label><input type="radio" name="mkt" value="local"> Host Local Tournament ($30K) — +2K fans; Morale +5</label><br>
+          <label><input type="radio" name="mkt" value="minimal"> Minimal Social ($0) — flat fans</label>
+        </fieldset>
+        <fieldset class="card" style="padding:12px">
+          <legend>3) Player Focus</legend>
+          <label><input type="radio" name="ply" value="bootcamp"> Intense Bootcamp ($0) — TSR +8; Morale −10</label><br>
+          <label><input type="radio" name="ply" value="retreat"> Team Bonding Retreat ($10K) — Morale +10; TSR −3</label><br>
+          <label><input type="radio" name="ply" value="balanced"> Balanced Schedule ($0) — TSR +2; Morale +2</label>
+        </fieldset>
+        <button type="button" id="btnRun">Confirm Decisions & Run Turn</button>
+      </form>
+      <h3 style="margin-top:16px">Turn Log</h3>
+      <pre id="log" style="white-space:pre-wrap"></pre>
+    </div>
+
     <div class="card" id="output" style="display:none">
       <h2>Simulation Results</h2>
-      <pre id="log"></pre>
-      <button onclick="window.print()">Save Final Report (PDF)</button>
+      <pre id="final"></pre>
+      <button id="btnPDF">Save Final Report (PDF)</button>
+      <button id="btnContinue">Continue Simulation</button>
     </div>
   </div>
 
   <script>
-    const log = document.getElementById('log');
-    const startBtn = document.getElementById('btnStart');
-    const output = document.getElementById('output');
+  (()=>{
+    const $ = s=>document.querySelector(s)
+    const $$ = s=>Array.from(document.querySelectorAll(s))
 
-    startBtn.addEventListener('click', ()=>{
-      output.style.display='block';
-      log.textContent = 'Simulation beginning...\n(Full 8-turn logic continues as previously implemented)';
-      window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
-    });
+    const $intro = $('#intro')
+    const $game = $('#game')
+    const $status = $('#status')
+    const $scenarioBox = $('#scenarioBox')
+    const $log = $('#log')
+    const $final = $('#final')
+    const $output = $('#output')
+
+    const fmt = n=>`$${Number(n).toLocaleString()}`
+    const clamp=(v,min,max)=>Math.max(min,Math.min(max,v))
+    const rankName=t=>t===1?'Tier 1 (Elite)':t===2?'Tier 2 (Challenger)':'Tier 3 (Rookie)'
+
+    const START = {
+      turn:1, turnsTotal:8,
+      cash:250000, salaries:30000,
+      fans:5000, tsr:60, morale:70, rank:3,
+      analysts:0, merchNext:0, negCashStreak:0, streak:0,
+      name:'' , history:[]
+    }
+    let S = JSON.parse(JSON.stringify(START))
+
+    function setName(){ S.name = ($('#studentName').value||'').trim() }
+
+    function scenarioText(){
+      if (S.turn===1) return 'Turn 1 — A New Season Dawns: Sponsors are watching; players are hungry. Set your tone.'
+      const flavors=[
+        'Scrim results leaked; expectations spike.',
+        'Rival signs a star; pressure rises.',
+        'Patch shakes the meta; adapt fast.',
+        'Travel snafus test leadership.',
+        'Viral clip boosts visibility.',
+        'Analysts call you a dark horse.'
+      ]
+      const i=(S.turn+S.fans+S.tsr)%flavors.length
+      return `Turn ${S.turn} — ${flavors[i]}`
+    }
+
+    function render(){
+      $status.innerHTML = [
+        ['Turn',`${S.turn} / ${S.turnsTotal}`],
+        ['Cash',fmt(S.cash)],
+        ['Fixed Expenses',fmt(S.salaries)+'/turn'],
+        ['Fans',S.fans.toLocaleString()],
+        ['TSR',`${S.tsr} / 100`],
+        ['Morale',`${S.morale} / 100`],
+        ['Rank',rankName(S.rank)],
+        ['Analysts',String(S.analysts)]
+      ].map(([k,v])=>`<div class="card"><b>${k}</b><div>${v}</div></div>`).join('')
+      $scenarioBox.textContent = scenarioText()
+    }
+
+    function appendLog(lines){ const t=Array.isArray(lines)?lines.join('
+'):String(lines); $log.textContent=(t+'
+'+$log.textContent).trim() }
+
+    function opponentDifficulty(){
+      const base=(S.rank===3?65:S.rank===2?75:85)
+      const adapt=Math.min(8,Math.max(-8,(S.streak||0)*2))
+      const jitter=Math.floor(Math.random()*11)-5
+      return Math.max(40, base+adapt+jitter)
+    }
+    function winP(){ const opp=opponentDifficulty(); const m=S.morale/100; return clamp((S.tsr*m)/opp,0.05,0.95) }
+
+    function academicFeedback(pl,tot){
+      const {revenue,expenses,fixed,variable}=tot
+      if (pl<0 && revenue<fixed) return 'Your revenue did not reach the break‑even point; fixed costs exceeded contribution margin.'
+      if (pl<0 && variable>fixed) return 'High variable costs eroded margins this turn; tighten discretionary spending.'
+      if (pl>=0 && revenue>expenses) return 'Positive contribution margin covered fixed costs and produced profit—well managed.'
+      if (pl<0) return 'A net loss increased liabilities pressure; consider boosting sponsorship assets or cutting costs.'
+      return 'Stable performance with costs under control; maintain assets that drive recurring revenue.'
+    }
+
+    function applyDecisions(ops,mkt,ply){
+      let log=[]
+      // Mini-event
+      const minis=[
+        ()=>{S.morale+=3;return '🎉 Team birthday boosts vibes. Morale +3.'},
+        ()=>{S.fans+=200;return '📹 BTS vlog pops off. Fans +200.'},
+        ()=>{S.tsr-=2;return '🛠️ Patch hotfix nerfs your comp slightly. TSR −2.'},
+        ()=>{return '📰 Local feature on your rookie raises hype.'}
+      ]
+      log.push(minis[Math.floor(Math.random()*minis.length)]())
+
+      let variable=0
+      // Ops
+      if(ops==='analyst'){variable+=20000; S.tsr+=5; S.salaries+=5000; S.analysts++; log.push('⚙️ Hired Analyst (Var −$20K; Fixed +$5K/turn; TSR +5).')}
+      else if(ops==='house'){variable+=40000; S.morale+=10; S.fans+=500; log.push('🏠 Upgraded Team House (Var −$40K; Morale +10; Fans +500).')}
+      else if(ops==='lean'){S.tsr-=2; log.push('🧮 Stayed Lean (TSR −2).')}
+
+      // Marketing
+      if(mkt==='merch'){variable+=25000; S.fans+=1000; S.merchNext+=10000; log.push('🛍️ Merch drop (Var −$25K; +1K Fans; +$10K next turn).')}
+      else if(mkt==='local'){variable+=30000; S.fans+=2000; S.morale+=5; log.push('🎪 Local Tournament (Var −$30K; +2K Fans; Morale +5).')}
+      else if(mkt==='minimal'){log.push('📣 Minimal Social (no spend).')}
+
+      // Player focus
+      if(ply==='bootcamp'){S.tsr+=8; S.morale-=10; log.push('💪 Bootcamp (TSR +8; Morale −10).')}
+      else if(ply==='retreat'){variable+=10000; S.morale+=10; S.tsr-=3; log.push('🌲 Retreat (Var −$10K; Morale +10; TSR −3).')}
+      else if(ply==='balanced'){S.tsr+=2; S.morale+=2; log.push('⚖️ Balanced (TSR +2; Morale +2).')}
+
+      S.tsr=clamp(Math.round(S.tsr),0,100)
+      S.morale=clamp(Math.round(S.morale),0,100)
+
+      // Competitive
+      const p = winP(); const win = Math.random()<p
+      if(win){ S.streak=(S.streak||0)+1 } else { S.streak=0 }
+      const prizeTable={1:60000,2:35000,3:20000}
+      let prize = win ? prizeTable[S.rank] : 0
+      if(win){ S.fans+=1500; confetti(24); log.push(`🏆 WIN (p=${(p*100).toFixed(1)}%). Prize ${fmt(prize)}, Fans +1,500.`) }
+      else { variable+=10000; const before=S.fans; S.fans=Math.max(0,Math.round(S.fans*0.95)); log.push(`💔 LOSS (p=${(p*100).toFixed(1)}%). Sponsor penalty −$10,000; Fans ${before.toLocaleString()} → ${S.fans.toLocaleString()} (−5%).`) }
+
+      // Finance
+      const sponsorships = Math.round((S.rank===1?30000:S.rank===2?18000:9000)+Math.max(0,S.tsr-50)*120)
+      const merch = S.merchNext; S.merchNext=0
+      const fixed = S.salaries
+      const travel=5000; variable+=travel
+      const revenue = sponsorships + merch + prize
+      const expenses = fixed + variable
+      const pl = revenue - expenses
+      S.cash += pl
+
+      // Rank momentum
+      let promoted=false, demoted=false
+      if(S.rank===3 && S.tsr>=70 && S.fans>=7000){S.rank=2; promoted=true}
+      else if(S.rank===2 && S.tsr>=80 && S.fans>=12000){S.rank=1; promoted=true}
+      else if(S.tsr<=50 && S.morale<=40 && S.fans<5000 && S.rank<3){S.rank=3; demoted=true}
+      if(promoted) log.push('🚀 Rank update: Promoted!')
+      if(demoted) log.push('📉 Rank update: Demoted.')
+
+      const fb = academicFeedback(pl,{revenue,expenses,fixed,variable})
+      log.push('FINANCE SUMMARY — shown this turn:')
+      log.push(`  Total Revenue = Sponsorships (${fmt(sponsorships)}) + Merch Sales (${fmt(merch)}) + Prize Money (${fmt(prize)}) = ${fmt(revenue)}`)
+      log.push(`  Total Expenses = Fixed (${fmt(fixed)}) + Variable (${fmt(variable)}) = ${fmt(expenses)}`)
+      log.push(`  Profit/Loss (P/L) = ${fmt(revenue)} − ${fmt(expenses)} = ${fmt(pl)}`)
+      log.push(`  Updated Cash Reserves: ${fmt(S.cash)}`)
+      log.push(`Academic Feedback: ${fb}`)
+
+      S.history.push({turn:S.turn,cash:S.cash,salaries:S.salaries,fans:S.fans,tsr:S.tsr,morale:S.morale,rank:S.rank,revenue:{sponsorships: sponsorships, merchSales: merch, prizeMoney: prize},expenses:{fixed,variable},pl})
+
+      appendLog([`Turn ${S.turn} summary:`,...log,'—'.repeat(50)])
+
+      // Game Over checks
+      if(S.cash<0) S.negCashStreak=(S.negCashStreak||0)+1; else S.negCashStreak=0
+      if(S.negCashStreak>=2){ return gameOver('Financial Ruin','Cash reserves were below $0 for two consecutive turns.') }
+      if(S.morale<=0){ return gameOver('Mutiny','Player morale fell to 0. The roster refuses to compete.') }
+    }
+
+    function gameOver(reason,detail){
+      $intro.style.display='none'; $game.style.display='none'; $output.style.display='block'
+      $final.textContent = `GAME OVER — ${reason}
+${detail}
+Final Cash: ${fmt(S.cash)}
+Fans: ${S.fans.toLocaleString()}
+Rank: ${rankName(S.rank)}
+Turns played: ${S.turn} / ${S.turnsTotal}`
+      bindEndButtons()
+    }
+
+    function finishSeason(){
+      // Final scoring per weights: Rank 40%, Profit 40%, Fans 20%
+      const endingCash=S.cash, endingRank=S.rank, endingFans=S.fans
+      const profit=endingCash-START.cash
+      const rankSub=(endingRank===1?100:endingRank===2?60:30)
+      const profitSub=(()=>{const min=-100000,max=200000; const pct=(profit-min)/(max-min); return clamp(Math.round(pct*100),0,100)})()
+      const fanSub=clamp(Math.round((endingFans/20000)*100),0,100)
+      const finalScore=Math.round(rankSub*0.40 + profitSub*0.40 + fanSub*0.20)
+
+      const avoidedRuin=(S.negCashStreak||0)<2 && !(endingCash<0)
+      const balanced=(S.tsr>=60 && S.morale>=60) || (profit>0 && endingRank<=2)
+      const profitable=profit>0
+      const a=avoidedRuin?'You avoided financial ruin':'You flirted with financial ruin'
+      const b=balanced?'balanced short‑term performance with long‑term capability building':'over‑weighted either short‑term pushes or long‑term investments'
+      const c=profitable?'your revenues exceeded expenses to produce profit':'expenses outpaced revenues, resulting in a loss'
+      const assess=`${a}, ${b}, and ${c}. Consider how fixed costs (salaries) and variable decisions (marketing, travel, retreats) influenced contribution margin and your path to break‑even.`
+
+      $intro.style.display='none'; $game.style.display='none'; $output.style.display='block'
+      const student = (S.name&&S.name.trim())?S.name.trim():'Manager X'
+      $final.textContent = `STOP the turn‑based simulation. End of Turn ${S.turnsTotal}.
+
+Student: ${student}
+Final Cash: ${fmt(endingCash)}
+Final Team Rank: ${rankName(endingRank)}
+Final Fan Base: ${endingFans.toLocaleString()} followers
+
+Score Breakdown (out of 100)
+  Rank (40%): ${rankSub} -> ${(rankSub*0.40).toFixed(1)}
+  Profit (40%): ${profitSub} -> ${(profitSub*0.40).toFixed(1)}
+  Fans (20%): ${fanSub} -> ${(fanSub*0.20).toFixed(1)}
+
+Final Score: ${finalScore} / 100
+
+Final Assessment:
+${assess}`
+      bindEndButtons()
+    }
+
+    function bindEndButtons(){
+      $('#btnPDF')?.addEventListener('click',()=>window.print())
+      $('#btnContinue')?.addEventListener('click',()=>{
+        const extra = parseInt(prompt('How many extra turns would you like to add to continue the simulation?', '4')||'0',10)
+        if (!Number.isFinite(extra) || extra<=0) return
+        S.turnsTotal += extra
+        $output.style.display='none'
+        $game.style.display='block'
+        $('#choices')?.reset()
+        render()
+        // re-enable run button
+        $('#btnRun').disabled=false
+      })
+    }
+
+    function confetti(n=20){
+      const c=document.createElement('div'); c.style.position='fixed'; c.style.left=0; c.style.top=0; c.style.pointerEvents='none'; c.style.width='100vw'; c.style.height=0; document.body.appendChild(c)
+      for(let i=0;i<n;i++){
+        const s=document.createElement('div'); s.textContent=['🎉','✨','💥','🌟'][i%4]; s.style.position='absolute'; s.style.left=Math.random()*100+'vw'; s.style.top='-10px'; s.style.fontSize=(12+Math.random()*18)+'px'; s.style.animation=`fall ${2+Math.random()*2}s linear forwards`; c.appendChild(s); setTimeout(()=>s.remove(),4000)
+      }
+      setTimeout(()=>c.remove(),4200)
+    }
+
+    // Hook up Start button to transition to full game
+    document.getElementById('btnStart').addEventListener('click',()=>{
+      setName()
+      $intro.style.display='none'
+      $game.style.display='block'
+      render()
+    })
+
+    // Run Turn button
+    document.getElementById('btnRun').addEventListener('click',()=>{
+      setName()
+      const ops=$('input[name=ops]:checked')?.value
+      const mkt=$('input[name=mkt]:checked')?.value
+      const ply=$('input[name=ply]:checked')?.value
+      if(!ops||!mkt||!ply){ alert('Pick one option in each category.'); return }
+
+      applyDecisions(ops,mkt,ply)
+      // advance turn
+      S.turn+=1
+      $('#choices').reset()
+      render()
+
+      if(S.turn>S.turnsTotal){ finishSeason(); $('#btnRun').disabled=true }
+    })
+  })()
   </script>
 </body>
 </html>
+
 
