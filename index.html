@@ -136,12 +136,34 @@
       </ul>
 
       <h3>🏆 Winning the Game</h3>
-      <p>Your final score is based on:</p>
+      <p><strong>Multiple ways to win!</strong> Your final score is based on three factors:</p>
       <ul>
-        <li><strong>40% Team Rank</strong> (Tier 1 = best score)</li>
+        <li><strong>40% Team Rank</strong> (Tier 1 = 100 pts, Tier 2 = 60 pts, Tier 3 = 30 pts)</li>
         <li><strong>40% Profit</strong> (Ending cash minus starting $250K)</li>
-        <li><strong>20% Fanbase</strong> (More fans = better score)</li>
+        <li><strong>20% Fanbase</strong> (Scale up to 20,000+ fans)</li>
       </ul>
+
+      <div class="term">
+        <strong>Grade Levels:</strong>
+        <ul style="margin-top:8px">
+          <li><strong>40+ points & survived:</strong> PASSING ✅ - You kept the org alive!</li>
+          <li><strong>50+ points:</strong> MODERATE SUCCESS 👍 - Solid performance</li>
+          <li><strong>60+ points:</strong> SOLID SUCCESS ✅✅ - Sustainable org</li>
+          <li><strong>70+ points:</strong> STRONG SUCCESS 🎯 - Excellent management</li>
+          <li><strong>Special Achievements:</strong> Elite rank + 15K fans + $50K profit = <strong>TOTAL DOMINATION 🏆</strong></li>
+        </ul>
+      </div>
+
+      <div class="term">
+        <strong>Alternative Win Paths (Grade A+ regardless of total score):</strong>
+        <ul style="margin-top:8px">
+          <li><strong>Financial Mogul:</strong> Make $100K+ profit (pure business focus)</li>
+          <li><strong>Brand Builder:</strong> Reach 20K+ fans with Tier 2+ rank (massive fanbase)</li>
+          <li><strong>Elite Competitor:</strong> Tier 1 rank with TSR 85+ (pure performance)</li>
+        </ul>
+      </div>
+
+      <p><strong>Key Insight:</strong> You don't need to excel at everything! Pick a strategy and master it. Financial genius? Focus on profit. Performance-driven? Push for Elite rank. Brand building? Grow that fanbase!</p>
 
       <div class="row" style="justify-content:center;margin-top:20px">
         <button class="btn primary" id="btnStartGame"><b>Got It! Start Playing →</b></button>
@@ -239,10 +261,18 @@
         <div class="divider"></div>
         <details>
           <summary>🎯 How Scoring Works</summary>
-          <p class="muted" style="margin-top:8px">Final Score is based on <b>Rank</b> (40%), <b>Profit</b> (40%), and <b>Fans</b> (20%). 
-          <br><br>Rank points: Tier 1 = 100, Tier 2 = 60, Tier 3 = 30. 
-          <br>Profit = ending cash minus $250K starting cash. 
-          <br>Aim for Tier 1 rank with positive profit!</p>
+          <div style="margin-top:8px;font-size:14px">
+            <p class="muted"><strong>Final Score = Rank (40%) + Profit (40%) + Fans (20%)</strong></p>
+            <p class="muted">Rank: Tier 1=100pts, Tier 2=60pts, Tier 3=30pts</p>
+            <p class="muted">Profit: $250K starting → aim for positive!</p>
+            <p class="muted">Fans: Scale to 20K+ for max points</p>
+            <div class="divider"></div>
+            <p class="muted"><strong>Win Conditions:</strong></p>
+            <p class="muted">• 40+ & Survived = Pass ✅<br>
+            • 60+ = Solid Success<br>
+            • 70+ = Strong Success<br>
+            • Special paths: $100K profit OR 20K fans OR Elite TSR 85+ = A+ win!</p>
+          </div>
         </details>
       </aside>
     </div>
@@ -606,6 +636,89 @@
 
         const finalScore = Math.round(rankSub*0.40 + profitSub*0.40 + fanSub*0.20)
 
+        // Determine achievement level and win status
+        function getAchievement(score, rank, profit, fans, cash) {
+          // Check for special achievements
+          const survived = cash >= 0
+          const elite = endingRank === 1
+          const profitable = profit > 0
+          const fanMilestone = fans >= 15000
+          
+          // Alternative win conditions (can win by excelling in one area)
+          const domination = elite && fans >= 15000 && profit > 50000 // All three strong
+          const financialMogul = profit > 100000 // Pure profit focus
+          const brandBuilder = fans >= 20000 && endingRank <= 2 // Fanbase empire
+          const eliteCompetitor = elite && S.tsr >= 85 // Peak performance
+          
+          if (domination) return { 
+            grade: 'S', 
+            title: '🏆 TOTAL DOMINATION', 
+            desc: 'Elite rank, massive fanbase, huge profit. You are a legendary esports manager!',
+            color: 'gold',
+            win: true
+          }
+          
+          if (financialMogul || brandBuilder || eliteCompetitor) return {
+            grade: 'A+',
+            title: '⭐ EXCEPTIONAL SUCCESS',
+            desc: financialMogul ? 'Financial genius! You built a highly profitable organization.' : 
+                  brandBuilder ? 'Brand empire! Your fanbase is massive and sponsors love you.' :
+                  'Elite competitor! Your team dominates at the highest level.',
+            color: 'gold',
+            win: true
+          }
+          
+          if (score >= 70) return { 
+            grade: 'A', 
+            title: '🎯 STRONG SUCCESS', 
+            desc: 'Excellent management across the board. Your org is thriving!',
+            color: 'good',
+            win: true
+          }
+          
+          if (score >= 60) return { 
+            grade: 'B+', 
+            title: '✅ SOLID SUCCESS', 
+            desc: 'Good performance! You built a sustainable esports organization.',
+            color: 'good',
+            win: true
+          }
+          
+          if (score >= 50 && survived) return { 
+            grade: 'B', 
+            title: '👍 MODERATE SUCCESS', 
+            desc: 'Decent results. You kept the lights on and showed promise.',
+            color: 'good',
+            win: true
+          }
+          
+          if (score >= 40 && survived) return { 
+            grade: 'C', 
+            title: '📊 PASSING', 
+            desc: 'You survived 8 turns without bankruptcy. That\'s a win in this business!',
+            color: 'warn',
+            win: true
+          }
+          
+          if (survived) return { 
+            grade: 'D', 
+            title: '😅 SURVIVED', 
+            desc: 'The team survived but struggled. Learn from this experience.',
+            color: 'warn',
+            win: false
+          }
+          
+          return { 
+            grade: 'F', 
+            title: '❌ FAILED', 
+            desc: 'Bankruptcy or mutiny ended your run early. Try a different strategy!',
+            color: 'bad',
+            win: false
+          }
+        }
+        
+        const achievement = getAchievement(finalScore, endingRank, profit, endingFans, endingCash)
+
         function assessment(){
           const avoidedRuin = (S.negCashStreak||0) < 2 && !(endingCash < 0)
           const balanced = (S.tsr >= 60 && S.morale >= 60) || (profit > 0 && endingRank <= 2)
@@ -618,15 +731,27 @@
 
         const stat = (key,val,note) => `<div class="stat"><b>${key}</b><div style="font-size:20px;margin:4px 0">${val}</div>${note?`<div class="muted" style="font-size:12px">${note}</div>`:''}</div>`
 
+        const achievementColor = achievement.color === 'gold' ? '#fbbf24' : 
+                                  achievement.color === 'good' ? 'var(--good)' :
+                                  achievement.color === 'warn' ? 'var(--warn)' : 'var(--bad)'
+
         const screen = `
-          <div class="notice goodtext">
-            <b>🎊 GAME COMPLETE!</b> You have reached the end of Turn 8.
+          <div class="notice" style="background:rgba(106,168,255,0.1);border-color:${achievementColor}">
+            <div style="text-align:center">
+              <div style="font-size:48px;font-weight:bold;color:${achievementColor};margin-bottom:8px">${achievement.grade}</div>
+              <div style="font-size:24px;font-weight:bold;margin-bottom:8px">${achievement.title}</div>
+              <div style="font-size:16px;color:var(--muted)">${achievement.desc}</div>
+              ${achievement.win ? '<div style="margin-top:12px;font-size:18px;color:var(--good)">🎉 YOU WIN! 🎉</div>' : '<div style="margin-top:12px;font-size:16px;color:var(--warn)">Try again for a better result!</div>'}
+            </div>
           </div>
-          <h3>Final Scoring Screen</h3>
+          <div class="divider"></div>
+          <h3>Final Statistics</h3>
           <div class=\"stats\">
             ${stat('Student', (S.name && S.name.trim()) ? S.name.trim() : 'Manager X', '')}
-            ${stat('Final Cash Reserves', fmtMoney(endingCash), '')}
+            ${stat('Final Cash Reserves', fmtMoney(endingCash), endingCash < 0 ? '<span class="badtext">Bankrupt</span>' : '')}
+            ${stat('Profit/Loss', (profit >= 0 ? '+' : '') + fmtMoney(profit), profit >= 0 ? '<span class="goodtext">Profitable</span>' : '<span class="badtext">Loss</span>')}
             ${stat('Final Team Rank', rankName(endingRank), '')}
+            ${stat('Team Skill (TSR)', S.tsr, '')}
             ${stat('Final Fan Base', endingFans.toLocaleString() + ' followers', '')}
           </div>
           <div class=\"divider\"></div>
@@ -634,10 +759,24 @@
           <div class="stat">Rank Score (40%): ${rankSub} → ×0.40 = ${(rankSub*0.40).toFixed(1)}</div>
           <div class="stat">Profit Score (40%): ${profitSub} → ×0.40 = ${(profitSub*0.40).toFixed(1)}</div>
           <div class="stat">Fan Base Score (20%): ${fanSub} → ×0.20 = ${(fanSub*0.20).toFixed(1)}</div>
-          <div class="stat"><b>Final Score</b>: ${finalScore} / 100</div>
+          <div class="stat" style="background:${achievementColor === 'var(--bad)' ? 'var(--panel-2)' : 'rgba(106,168,255,0.1)'};border-color:${achievementColor}"><b>Final Score</b>: ${finalScore} / 100</div>
           <div class=\"divider\"></div>
-          <div class="section-title">Final Assessment</div>
-          <p class="muted">${assessment()}</p>
+          <details open>
+            <summary>📝 Performance Analysis</summary>
+            <p class="muted" style="margin-top:8px">${assessment()}</p>
+          </details>
+          <div class=\"divider\"></div>
+          <div class="notice" style="background:var(--panel-2)">
+            <b>Win Conditions:</b>
+            <ul class="muted" style="font-size:14px;margin:8px 0">
+              <li><b>40+ Score & Survived</b> = Passing ✅</li>
+              <li><b>50+ Score</b> = Moderate Success 👍</li>
+              <li><b>60+ Score</b> = Solid Success ✅✅</li>
+              <li><b>70+ Score</b> = Strong Success 🎯</li>
+              <li><b>Special Achievements:</b> Elite Rank + 15K Fans + $50K Profit = Total Domination 🏆</li>
+              <li><b>Alternative Wins:</b> $100K+ Profit OR 20K+ Fans OR Elite TSR 85+ = Exceptional Success ⭐</li>
+            </ul>
+          </div>
           <div class=\"divider\"></div>
           <div class="end"><button id="btnPDF" class="btn good"><b>Save Final Report (PDF)</b></button></div>
         `
