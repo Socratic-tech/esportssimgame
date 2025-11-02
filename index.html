@@ -230,6 +230,14 @@
       </section>
 
       <aside class="card" id="right">
+        <div id="turnSummary" style="display:none;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div class="section-title" style="margin:0">Last Turn Results</div>
+            <button class="btn ghost" id="btnDismissSummary" style="padding:4px 8px;font-size:12px">✕ Dismiss</button>
+          </div>
+          <div id="turnSummaryContent"></div>
+        </div>
+        
         <div class="section-title">Status</div>
         <div class="stats" id="stats"></div>
         
@@ -425,6 +433,92 @@
       el('plyOptions').innerHTML = renderCategory(S.currentChoices.ply, 'ply')
     }
 
+    function displayTurnSummary(summary) {
+      const $summary = el('turnSummary')
+      const $content = el('turnSummaryContent')
+      
+      const outcomeColor = summary.tournamentWin ? 'var(--good)' : 'var(--bad)'
+      const outcomeIcon = summary.tournamentWin ? '🏆' : '💔'
+      const cashColor = summary.netCash >= 0 ? 'var(--good)' : 'var(--bad)'
+      
+      const events = []
+      if (summary.rankChange) events.push(`<div style="color:var(--good)">📈 ${summary.rankChange}</div>`)
+      if (summary.fanMilestone) events.push(`<div style="color:var(--good)">🎉 ${summary.fanMilestone}</div>`)
+      if (summary.warnings && summary.warnings.length > 0) {
+        summary.warnings.forEach(w => events.push(`<div style="color:var(--warn)">⚠️ ${w}</div>`))
+      }
+      
+      $content.innerHTML = `
+        <div style="background:${summary.tournamentWin ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'};border:2px solid ${outcomeColor};border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="font-size:18px;font-weight:bold;color:${outcomeColor};margin-bottom:4px">
+            ${outcomeIcon} Tournament ${summary.tournamentWin ? 'WIN' : 'LOSS'}
+          </div>
+          <div style="font-size:14px;color:var(--muted)">
+            Win probability: ${summary.winProbability}
+          </div>
+        </div>
+        
+        <div style="background:var(--panel-2);border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="font-weight:bold;margin-bottom:8px;color:#cfe1ff">💰 Financial Summary</div>
+          <div style="display:grid;gap:4px;font-size:14px">
+            <div style="display:flex;justify-content:space-between">
+              <span class="muted">Revenue:</span>
+              <span class="goodtext">+${summary.revenue.toLocaleString()}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span class="muted">Expenses:</span>
+              <span class="badtext">-${summary.expenses.toLocaleString()}</span>
+            </div>
+            <div style="height:1px;background:var(--line);margin:4px 0"></div>
+            <div style="display:flex;justify-content:space-between;font-weight:bold">
+              <span>Net:</span>
+              <span style="color:${cashColor}">${summary.netCash >= 0 ? '+' : ''}${summary.netCash.toLocaleString()}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:bold;margin-top:4px">
+              <span>New Cash:</span>
+              <span>${summary.newCash.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div style="background:var(--panel-2);border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="font-weight:bold;margin-bottom:8px;color:#cfe1ff">📊 Stat Changes</div>
+          <div style="display:grid;gap:4px;font-size:14px">
+            <div style="display:flex;justify-content:space-between">
+              <span class="muted">TSR:</span>
+              <span style="color:${summary.tsrChange >= 0 ? 'var(--good)' : 'var(--bad)'}">
+                ${summary.oldTSR} → ${summary.newTSR} (${summary.tsrChange >= 0 ? '+' : ''}${summary.tsrChange})
+              </span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span class="muted">Morale:</span>
+              <span style="color:${summary.moraleChange >= 0 ? 'var(--good)' : 'var(--bad)'}">
+                ${summary.oldMorale} → ${summary.newMorale} (${summary.moraleChange >= 0 ? '+' : ''}${summary.moraleChange})
+              </span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span class="muted">Fans:</span>
+              <span style="color:${summary.fanChange >= 0 ? 'var(--good)' : 'var(--bad)'}">
+                ${summary.oldFans.toLocaleString()} → ${summary.newFans.toLocaleString()} (${summary.fanChange >= 0 ? '+' : ''}${summary.fanChange.toLocaleString()})
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        ${events.length > 0 ? `
+        <div style="background:rgba(106,168,255,0.1);border:1px solid var(--accent);border-radius:12px;padding:12px">
+          <div style="font-weight:bold;margin-bottom:8px;color:var(--accent)">🌟 Special Events</div>
+          <div style="font-size:14px;display:grid;gap:4px">
+            ${events.join('')}
+          </div>
+        </div>
+        ` : ''}
+      `
+      
+      $summary.style.display = 'block'
+      $summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+
     function render(){
       const yr = Math.floor((S.turn-1) / 4) + 1
       const qtr = ((S.turn-1) % 4) + 1
@@ -492,6 +586,12 @@
 
     function applyDecisions(opsId, mktId, plyId){
       let log = []
+      
+      // Track values for summary
+      const oldTSR = S.tsr
+      const oldMorale = S.morale
+      const oldFans = S.fans
+      const oldCash = S.cash
 
       // Apply payouts from previous turn first
       const merchSales = S.merchPayoutNext
@@ -571,11 +671,25 @@
 
       // Rank updates
       let promoted = false, demoted = false
+      let rankChangeText = ''
+      const oldRank = S.rank
       if (S.rank === 3 && S.tsr >= 70 && S.fans >= 7000){ S.rank = 2; promoted = true }
       else if (S.rank === 2 && S.tsr >= 80 && S.fans >= 12000){ S.rank = 1; promoted = true }
       else if (S.tsr <= 50 && S.morale <= 40 && S.fans < 5000 && S.rank < 3){ S.rank = 3; demoted = true }
-      if (promoted) log.push(`Rank update: Promoted to ${rankName(S.rank)}!`)
-      if (demoted) log.push(`Rank update: Demoted to ${rankName(S.rank)}.`)
+      if (promoted) {
+        rankChangeText = `Promoted to ${rankName(S.rank)}!`
+        log.push(`Rank update: ${rankChangeText}`)
+      }
+      if (demoted) {
+        rankChangeText = `Demoted to ${rankName(S.rank)}`
+        log.push(`Rank update: ${rankChangeText}`)
+      }
+
+      // Fan milestones
+      let fanMilestone = ''
+      if (oldFans < 10000 && S.fans >= 10000) fanMilestone = '10K Fan Milestone! Sponsor Bonus +$20K'
+      else if (oldFans < 15000 && S.fans >= 15000) fanMilestone = '15K Fan Milestone! Major Sponsor +$30K'
+      else if (oldFans < 25000 && S.fans >= 25000) fanMilestone = '25K Fan Milestone! Elite Sponsorship +$50K'
 
       const fb = academicFeedback(profitLoss, {
         revenue: totalRevenue,
@@ -599,6 +713,32 @@
       )
 
       appendLog(log)
+
+      // Build turn summary
+      const warnings = []
+      if (S.cash < 0) warnings.push('Negative cash - 1 more turn = bankruptcy!')
+      if (S.morale < 30) warnings.push('Low morale - risk of player mutiny!')
+      
+      displayTurnSummary({
+        tournamentWin: didWin,
+        winProbability: `${(pWin*100).toFixed(1)}%`,
+        revenue: totalRevenue,
+        expenses: totalExpenses,
+        netCash: profitLoss,
+        newCash: fmtMoney(S.cash),
+        oldTSR: oldTSR,
+        newTSR: S.tsr,
+        tsrChange: S.tsr - oldTSR,
+        oldMorale: oldMorale,
+        newMorale: S.morale,
+        moraleChange: S.morale - oldMorale,
+        oldFans: oldFans,
+        newFans: S.fans,
+        fanChange: S.fans - oldFans,
+        rankChange: rankChangeText,
+        fanMilestone: fanMilestone,
+        warnings: warnings
+      })
 
       // Failure checks
       if (S.cash < 0) S.negCashStreak = (S.negCashStreak||0) + 1; else S.negCashStreak = 0
@@ -819,6 +959,7 @@
       S = JSON.parse(JSON.stringify(STARTING))
       S.seenTutorial = true
       $log.textContent = ''
+      el('turnSummary').style.display = 'none'
       render()
       el('btnConfirm').disabled = false
       saveLocal('autosave', S)
@@ -866,6 +1007,13 @@
       $modal.style.display = 'none'
       S.seenTutorial = true
       saveLocal('autosave', S)
+    })
+
+    // Dismiss turn summary button
+    document.addEventListener('click', (e) => {
+      if (e.target.id === 'btnDismissSummary') {
+        el('turnSummary').style.display = 'none'
+      }
     })
 
     function saveLocal(key, obj){ try{ localStorage.setItem(key, JSON.stringify(obj)) }catch(_){} }
