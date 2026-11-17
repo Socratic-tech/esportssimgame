@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="A turn-based, 8-turn (2-year) esports org management simulation. Make 3 decisions per turn and maximize rank, profit and fans.">
-<title>GM Sim (seed) • Esports Company Management • Lakeshore Lynx</title>
+<meta name="description" content="An 8-quarter esports finance simulation based on Chapter 13: revenue streams, player pay and sponsorships. Learn one money idea each quarter and finish above $0.">
+<title>Esports Finance Basics • Manager X</title>
 <style>
 :root{
  --bg:#f1f3fb;--surface:#fff;--ink:#1b2236;--muted:#4f5a75;--line:#dde1f2;--soft:#f6f7fe;
- --indigo:#4338ca;--indigo-soft:#eceeff;--violet:#7c3aed;--teal:#0f766e;--teal-soft:#d9f3ee;
- --amber:#b45309;--amber-soft:#fff1d2;--rose:#be123c;--rose-soft:#ffe3e9;--green:#15803d;--green-soft:#dcf4e4;
+ --indigo:#4338ca;--indigo-soft:#eceeff;--teal:#0f766e;--teal-soft:#d9f3ee;
+ --amber:#92400e;--amber-soft:#fff1d2;--rose:#be123c;--rose-soft:#ffe3e9;--green:#166534;--green-soft:#dcf4e4;
  --focus:#3b0f9c;--shadow:0 10px 30px rgba(35,45,100,.09),0 2px 6px rgba(35,45,100,.06);
  --r:22px;color-scheme:light;
 }
@@ -27,7 +27,6 @@ button,input,select{font:inherit}
 :focus-visible{outline:3px solid var(--focus)!important;outline-offset:3px;box-shadow:0 0 0 6px #fff}
 .small{font-size:.92rem}
 .muted{color:var(--muted)}
-.pill{display:inline-block;background:var(--indigo-soft);color:var(--indigo);font-weight:800;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:.2rem .8rem}
 .kicker{display:inline-block;background:var(--indigo-soft);color:var(--indigo);font-weight:800;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:.2rem .8rem;margin-bottom:4px}
 
 /* masthead */
@@ -57,7 +56,7 @@ button,input,select{font:inherit}
 .rlab{font-size:.74rem;font-weight:700;color:var(--muted);white-space:nowrap}
 .ring .delta{position:absolute;top:-8px;left:50%;transform:translateX(8px);background:#fff;border-radius:999px;padding:0 6px;box-shadow:0 2px 6px rgba(0,0,0,.14);font-size:.72rem}
 .delta{font-weight:800;font-size:.85em;white-space:nowrap}
-.delta.up{color:var(--green)}.delta.down{color:var(--rose)}.delta.flat{color:var(--muted)}
+.delta.up{color:var(--green)}.delta.down{color:var(--rose)}
 .chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
 main{max-width:1220px;margin:auto;padding:18px 18px 56px}
@@ -71,7 +70,6 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 .btn.primary{background:linear-gradient(135deg,#4338ca,#6d4df0);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(67,56,202,.32)}
 .btn.primary:hover{background:linear-gradient(135deg,#3b32b8,#5f3fe0)}
 .btn.big{min-height:54px;font-size:1.08rem;padding:.6rem 1.6rem}
-.btn.danger{background:var(--rose);color:#fff;border-color:transparent}
 .btn.ghost{border-color:transparent;background:transparent;color:var(--ink);padding:.4rem .9rem}
 .btn.ghost:hover{background:var(--indigo-soft)}
 .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
@@ -82,7 +80,6 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 .chip.bad{background:var(--rose-soft);box-shadow:none;color:var(--rose)}
 .note{border-radius:16px;background:var(--soft);padding:12px 16px;box-shadow:inset 0 0 0 1px var(--line);margin:10px 0}
 .note.ok{background:var(--green-soft);box-shadow:inset 4px 0 0 var(--green)}
-.note.bad{background:var(--rose-soft);box-shadow:inset 4px 0 0 var(--rose)}
 .note.warn{background:var(--amber-soft);box-shadow:inset 4px 0 0 var(--amber)}
 .note.info{background:var(--indigo-soft);box-shadow:inset 4px 0 0 var(--indigo)}
 .note>*:first-child{margin-top:0}.note>*:last-child{margin-bottom:0}
@@ -92,7 +89,8 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 .hero2 .lead{font-size:1.15rem}
 .hero2 h2{font-size:clamp(2rem,5vw,3.1rem);font-weight:900;letter-spacing:-.02em;text-transform:uppercase}
 .hero2 label{display:block;font-weight:800;margin:14px 0 6px}
-.hero2 input{width:100%;max-width:420px;min-height:48px;border:2px solid #aab1da;border-radius:14px;padding:.5rem .9rem;background:#fff;color:var(--ink)}
+.hero2 input{width:100%;max-width:420px;min-height:48px;border:2px solid #646db0;border-radius:14px;padding:.5rem .9rem;background:#fff;color:var(--ink)}
+.hero2 input::placeholder{color:#5b6480;opacity:1}
 .scene{width:100%;height:auto;display:block}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
 .tile{background:#fff;border-radius:20px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;font-size:.95rem}
@@ -102,8 +100,7 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 .career-card{background:linear-gradient(120deg,#fff,#f1f4ff)}
 .career-path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;list-style:none;padding:0;margin:12px 0 0}
 .career-path li{display:grid;grid-template-rows:auto auto 1fr;gap:5px;align-content:start;min-height:110px;padding:12px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px var(--line)}
-.career-num{display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(135deg,var(--indigo),#22b8cf);color:#fff;font-weight:900}
-.career-path li strong{line-height:1.2}
+.career-num{display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(135deg,var(--indigo),#0e7490);color:#fff;font-weight:900}
 .career-path li .small{color:var(--muted);line-height:1.4}
 .glossary dt{font-weight:900;margin-top:.7rem}
 .glossary dd{margin:.1rem 0 .3rem}
@@ -113,9 +110,9 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 /* decision banner */
 .banner{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:22px;align-items:center;border-radius:28px;padding:26px 28px;margin-bottom:18px;box-shadow:var(--shadow);background:linear-gradient(135deg,#fff 0,var(--bt,#eef0ff) 100%)}
 .banner h2{margin:.4rem 0 .6rem}
-.bart{border-radius:24px;padding:16px;background:linear-gradient(135deg,var(--c1,#4338ca),var(--c2,#3b82f6));align-self:center;color:#fff;box-shadow:0 12px 26px rgba(35,45,100,.2);text-align:center}
+.bart{border-radius:24px;padding:16px;background:linear-gradient(135deg,var(--c1,#4338ca),var(--c2,#1d4ed8));align-self:center;color:#fff;box-shadow:0 12px 26px rgba(35,45,100,.2);text-align:center}
 .bart .big{font-size:2.6rem;line-height:1;font-weight:900}
-.bart .lab{font-size:.88rem;font-weight:700;opacity:.92}
+.bart .lab{font-size:.88rem;font-weight:700}
 .bart .row{display:flex;justify-content:space-around;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.35)}
 .bart .row b{display:block;font-size:1.15rem}
 
@@ -132,7 +129,7 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 .opt{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:start;background:var(--soft);border-radius:18px;padding:12px 14px 12px 44px;cursor:pointer;box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .15s,background .15s}
 .opt:hover{background:var(--indigo-soft)}
 .opt input{position:absolute;opacity:0;pointer-events:none}
-.opt .rd{position:absolute;left:13px;top:14px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px #98a0d4}
+.opt .rd{position:absolute;left:13px;top:14px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px #5d67a8}
 .opt.sel{background:#fff;box-shadow:inset 0 0 0 3px var(--indigo),0 6px 16px rgba(67,56,202,.16)}
 .opt.sel .rd{background:radial-gradient(circle,var(--indigo) 0 42%,#fff 46%);box-shadow:inset 0 0 0 2px var(--indigo)}
 .opt:focus-within{outline:3px solid var(--focus);outline-offset:2px}
@@ -144,18 +141,13 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 .confirm{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between;margin-top:16px;background:#fff;border-radius:22px;padding:14px 18px;box-shadow:var(--shadow)}
 .confirm .plan{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-/* results */
-.result h3{margin-top:0}
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.mini{background:var(--soft);border-radius:16px;padding:12px 14px;box-shadow:inset 0 0 0 1px var(--line)}
-.mini h4{margin:0 0 6px}
 .kv{display:flex;justify-content:space-between;gap:10px;font-size:.95rem;padding:2px 0}
 .kv.tot{border-top:1px dashed var(--line);margin-top:4px;padding-top:6px;font-weight:900}
 .pos{color:var(--green);font-weight:800}.neg{color:var(--rose);font-weight:800}
 
 /* final */
 .grade{display:grid;grid-template-columns:150px minmax(0,1fr);gap:22px;align-items:center;border-radius:28px;padding:26px 28px;margin-bottom:18px;box-shadow:var(--shadow);background:linear-gradient(135deg,#fff 0,var(--gt,#eef0ff) 100%)}
-.gbadge{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3.6rem;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--g1,#4338ca),var(--g2,#22b8cf));box-shadow:0 12px 26px rgba(35,45,100,.22)}
+.gbadge{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3.6rem;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--g1,#4338ca),var(--g2,#0f766e));box-shadow:0 12px 26px rgba(35,45,100,.22)}
 .bars{display:grid;gap:12px;margin:8px 0}
 .bar .bt{display:flex;justify-content:space-between;font-weight:800;font-size:.95rem}
 .bar .tr{height:14px;border-radius:99px;background:#e4e7f8;overflow:hidden;margin-top:4px}
@@ -168,7 +160,7 @@ main{max-width:1220px;margin:auto;padding:18px 18px 56px}
 /* phone feed */
 .feedcol{position:sticky;top:12px;height:calc(100vh - 24px);min-height:0;align-self:start}
 .phone{display:flex;flex-direction:column;height:100%;min-height:0;margin:0;background:#fff;border-radius:30px;padding:18px 16px 14px;box-shadow:0 18px 40px rgba(35,45,100,.18),0 0 0 6px #e4e7f8;position:relative}
-.phone>summary{list-style:none;cursor:pointer;display:flex;justify-content:center;min-height:14px}
+.phone>summary{list-style:none;cursor:pointer;display:flex;justify-content:center;min-height:28px}
 .phone>summary::-webkit-details-marker{display:none}
 .phone>summary:before{content:"";position:absolute;top:8px;left:50%;width:64px;height:7px;border-radius:99px;background:#d4d8ee;transform:translateX(-50%)}
 .phone:not([open]){height:auto}
@@ -189,8 +181,40 @@ dialog::backdrop{background:rgba(27,34,54,.5);backdrop-filter:blur(2px)}
 dialog .dh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:18px 22px 6px}
 dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 
+/* chapter 13 moment */
+.moment{border-top:6px solid var(--indigo)}
+.moment h3{margin:.2rem 0 .4rem;font-size:1.3rem}
+.mopts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;border:0;padding:0;margin:12px 0}
+.moment.done{border-top-color:var(--teal);background:linear-gradient(120deg,#fff,#f1fbf8)}
+.phase{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.3rem 0 .5rem}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-/* newspaper splash */
+/* reading options + learning supports */
+html.ts-1{font-size:112.5%}
+html.ts-2{font-size:125%}
+html.ls-1 body,html.ls-1 .cols{line-height:1.9}
+html.ls-1 .opt .fl,html.ls-1 .post p,html.ls-1 .pbox p{line-height:1.75}
+.btn.sm{min-height:44px;padding:.3rem 1rem;font-size:.9rem}
+.help{margin:8px 0 4px;border-radius:14px;background:var(--soft);box-shadow:inset 0 0 0 1px var(--line);padding:6px 14px}
+.help>summary{cursor:pointer;font-weight:800;color:var(--indigo);min-height:28px;display:flex;align-items:center}
+.help .row{margin:.4rem 0;font-size:.95rem}
+.mbar{display:grid;gap:5px;margin:0 0 10px}
+.mbar .tr{height:12px;border-radius:99px;background:#e4e7f8;overflow:hidden}
+.mbar .tr i{display:block;height:100%;border-radius:99px}
+.mbar .in{background:#4338ca}.mbar .out{background:#0e7490}
+.mbar .lb{display:flex;justify-content:space-between;font-size:.82rem;font-weight:800}
+.phone .notes{flex:none}
+.notes{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+.notes>summary{cursor:pointer;font-weight:800;min-height:28px;display:flex;align-items:center}
+.notes textarea{width:100%;min-height:96px;margin-top:6px;border:2px solid #646db0;border-radius:12px;padding:.5rem .7rem;background:#fff;color:var(--ink);font:inherit;resize:vertical}
+.notes textarea::placeholder{color:#5b6480;opacity:1}
+.userNotes{white-space:pre-wrap}
+fieldset.ropt{border:0;padding:0;margin:10px 0}
+fieldset.ropt legend{font-weight:900;margin-bottom:6px}
+.ropt label{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-right:14px;font-weight:700;cursor:pointer}
+.ropt input{width:22px;height:22px}
+
+/* newspaper */
 .paper{background:linear-gradient(180deg,#fff 0,#fbfbff 100%);border-radius:var(--r);padding:18px 28px 26px;margin:0 0 18px;box-shadow:var(--shadow);font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
 .paper:focus{outline:none}
 .pmast{text-align:center;border-top:5px double var(--ink);border-bottom:1px solid var(--ink);padding:8px 0 6px}
@@ -202,13 +226,11 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 .phead h2{font-family:inherit;font-size:clamp(1.9rem,5.2vw,3.2rem);font-weight:900;line-height:1.04;letter-spacing:-.015em;text-wrap:balance;margin:.3rem 0 .4rem;text-transform:none}
 .deck{font-size:1.2rem;font-style:italic;color:#323a55;margin:.3rem 0;line-height:1.4;max-width:60ch}
 .by{font-size:.84rem;color:var(--muted);font-family:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;font-weight:700;margin:.5rem 0 0}
-.pjump{font-family:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;font-size:.86rem;font-weight:800;color:var(--indigo);margin-left:8px}
+.pjump{font-size:.86rem;font-weight:800;color:var(--indigo);margin-left:8px}
 .pbody{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:24px;padding-top:16px}
-.cols{column-count:2;column-gap:28px;column-rule:1px solid var(--line);font-size:1.03rem;line-height:1.62}
+.cols{font-size:1.06rem;line-height:1.65}
 .cols p{margin:0 0 .85em}
 .cols p.drop::first-letter{float:left;font-size:3.5em;line-height:.84;padding:.07em .1em 0 0;font-weight:900;color:var(--indigo)}
-.pull{break-inside:avoid;margin:.3em 0 1em;padding:10px 0;border-top:3px solid var(--indigo);border-bottom:1px solid var(--line);font-size:1.25rem;font-weight:700;line-height:1.3;color:var(--indigo)}
-.pull cite{display:block;margin-top:6px;font-size:.82rem;font-style:normal;font-weight:700;color:var(--muted);font-family:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif}
 .pside{display:grid;gap:12px;align-content:start;font-family:ui-rounded,"SF Pro Rounded","Segoe UI","Atkinson Hyperlegible",system-ui,sans-serif}
 .pbox{border-radius:16px;background:var(--soft);box-shadow:inset 0 0 0 1px var(--line);padding:12px 14px}
 .pbox h3{margin:0 0 6px;font-size:1rem}
@@ -223,17 +245,17 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
  .phone{display:block;height:auto}
  .feed{max-height:420px}
  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
- .cats{grid-template-columns:1fr}
+ .cats,.mopts{grid-template-columns:1fr}
+ .pbody{grid-template-columns:1fr}
 }
 @media(max-width:720px){
  .hero2,.banner,.grade{grid-template-columns:1fr}
- .two,.grid3,.stats6,.career-path{grid-template-columns:1fr}
+ .two,.stats6,.career-path{grid-template-columns:1fr}
  .steps .sx{display:none}
  .gbadge{width:110px;height:110px;font-size:2.8rem}
  .hero2{padding:22px 20px}
+ .paper{padding:14px 18px 22px}
 }
-@media(max-width:1020px){.pbody{grid-template-columns:1fr}}
-@media(max-width:720px){.cols{column-count:1;column-rule:0}.paper{padding:14px 18px 22px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{
  body{background:#fff;font-size:11pt}
@@ -249,6 +271,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 </style>
 </head>
 <body>
+<noscript><p style="padding:16px;font-weight:700">This game needs JavaScript. Please turn it on and reload the page.</p></noscript>
 <a class="skip" href="#desk">Skip to the desk</a>
 
 <header class="mast">
@@ -260,11 +283,12 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     </span>
     <div>
      <h1>THE FRONT OFFICE</h1>
-     <span class="sub" id="subline">Esports Company Management · Manager X</span>
+     <span class="sub" id="subline">Esports Finance Basics</span>
     </div>
    </div>
    <div class="toolbar">
     <button class="btn ghost" id="btnHelp" type="button">📖 Words to know</button>
+    <button class="btn ghost" id="btnRead" type="button">Aa Reading options</button>
     <button class="btn ghost" id="btnSave" type="button">💾 Save</button>
     <button class="btn ghost" id="btnLoad" type="button">📂 Load</button>
     <button class="btn ghost" id="btnPrint" type="button">🖨 Print</button>
@@ -272,7 +296,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
    </div>
   </div>
   <div class="row2">
-   <ol class="steps" id="steps" aria-label="Turn progress"></ol>
+   <ol class="steps" id="steps" aria-label="Quarter progress"></ol>
    <div class="rings" id="rings"></div>
    <div class="chips" id="chips"></div>
   </div>
@@ -282,12 +306,13 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 <main>
  <div class="layout">
   <div id="desk" tabindex="-1"></div>
-  <aside class="feedcol" aria-label="Turn log">
+  <aside class="feedcol" aria-label="Quarter log">
    <details class="phone" open>
-    <summary aria-label="Show or hide the turn log"></summary>
-    <h2>📱 Turn log</h2>
-    <p class="sub">What happened as each quarter played out.</p>
-    <div class="feed" id="feed" role="log" aria-live="polite"></div>
+    <summary aria-label="Show or hide the quarter log"></summary>
+    <h2>📱 Quarter log</h2>
+    <p class="sub">What happened each quarter.</p>
+    <div class="feed" id="feed" tabindex="0" role="region" aria-label="Quarter log entries"></div>
+    <details class="notes" id="notesBox"><summary>My notes (optional)</summary><label class="sr" for="notes">My notes. Plan your next move or explain a choice.</label><textarea id="notes" rows="4" maxlength="2000" placeholder="Plan your next move, or explain why you chose what you did."></textarea></details>
    </details>
   </aside>
  </div>
@@ -295,20 +320,40 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 
 <dialog id="glossary" aria-labelledby="gtitle">
  <div class="dh"><h2 id="gtitle" style="margin:0;font-size:1.4rem">📖 Words to know</h2><button class="btn ghost" id="gclose" type="button">Close ✕</button></div>
- <div class="db">
+ <div class="db" tabindex="0" role="region" aria-labelledby="gtitle">
   <dl class="glossary">
-   <dt>Cash reserves</dt><dd>Your available money. You start with $250,000. Below $0 for two turns in a row means bankruptcy.</dd>
-   <dt>Salaries</dt><dd>Fixed costs paid every turn. They start at $30,000 and some hires raise them for good.</dd>
-   <dt>TSR (Team Skill Rating)</dt><dd>How good your players are, 0 to 100. Higher TSR means better win odds and more sponsor money.</dd>
-   <dt>Morale</dt><dd>How happy your players are, 0 to 100. It multiplies your win odds. At 0 the players quit and the game ends.</dd>
-   <dt>Fans</dt><dd>Your fanbase. Fans are required for promotion (7,000 for Tier 2, 12,000 for Tier 1).</dd>
-   <dt>Rank (Tier)</dt><dd>Tier 3 Rookie ($20K prize) → Tier 2 Challenger ($35K) → Tier 1 Elite ($60K).</dd>
-   <dt>Tournaments</dt><dd>One every turn. A win earns prize money and +1,500 fans. A loss costs a $10,000 sponsor penalty and 5% of your fans.</dd>
-   <dt>Win probability</dt><dd>(TSR × Morale%) ÷ 60, kept between 5% and 95%.</dd>
-   <dt>Communications director</dt><dd>A required hire (by Year 1, Quarter 3). Costs $12,000 plus $6,000 a turn, and adds 300 fans and $2,500 in sponsor money every turn, stops PR incidents, and boosts channel campaigns (Twitch, YouTube, Discord, X, Reddit, LinkedIn) by 25%.</dd>
-   <dt>PR incident</dt><dd>Without a communications director, each turn from Quarter 2 has a 40% chance of a public slip-up that costs $8,000 and 4% of your fans.</dd>
-   <dt>Contribution margin</dt><dd>Revenue minus variable costs. It has to cover your fixed costs (salaries) before you make a profit.</dd>
+   <dt>Cash</dt><dd>The money your club has. You start with $250,000. If cash is below $0 for two quarters in a row, the game ends.</dd>
+   <dt>Revenue streams</dt><dd>The different ways a club earns money: sponsors, prize money, and fans (tickets, merch and streams).</dd>
+   <dt>Fixed costs</dt><dd>Costs that are the same every quarter, like salaries. A new hire adds to your fixed costs for good.</dd>
+   <dt>Variable costs</dt><dd>Costs that change with your choices (marketing, training, events), plus travel, penalties and prize shares.</dd>
+   <dt>Break-even</dt><dd>Earning at least as much as you spend in a quarter. Money in must be as big as fixed costs plus variable costs.</dd>
+   <dt>Base salary</dt><dd>A player’s guaranteed pay. It is a fixed cost: you pay it whether the team wins or loses.</dd>
+   <dt>Prize share</dt><dd>A percent of prize money paid to players. It is a variable cost: it only costs you when you win.</dd>
+   <dt>Sponsorship deal</dt><dd>A flat deal pays the same every quarter. A performance deal pays more for each win. A fan-based deal pays more as your fanbase grows.</dd>
+   <dt>Activations</dt><dd>What sponsors expect in return: posts, event appearances and logos on gear. Good activations keep sponsors happy.</dd>
+   <dt>TSR (team skill)</dt><dd>How good your players are, from 0 to 100.</dd>
+   <dt>Morale</dt><dd>How happy your players are, from 0 to 100. Low morale lowers your chance to win. At 0 the players quit.</dd>
+   <dt>Fans</dt><dd>Your fanbase. You need fans to move up a tier.</dd>
+   <dt>Tier</dt><dd>Your club’s rank: Tier 3 Rookie, Tier 2 Challenger, Tier 1 Elite. Higher tiers pay bigger prizes.</dd>
+   <dt>Tournament</dt><dd>One each quarter. A win pays prize money and adds 1,500 fans. A loss costs $10,000 and 5% of your fans.</dd>
+   <dt>Sponsorship manager</dt><dd>A hire you must make by Quarter 3. It costs $12,000, plus $6,000 every quarter. Sponsors only sign deals with clubs that have one, and they pay $3,500 more every quarter.</dd>
   </dl>
+ </div>
+</dialog>
+
+<dialog id="readopts" aria-labelledby="rtitle">
+ <div class="dh"><h2 id="rtitle" style="margin:0;font-size:1.4rem">Aa Reading options</h2><button class="btn ghost" id="rclose" type="button">Done ✕</button></div>
+ <div class="db">
+  <p class="muted">These settings change how the game looks. They are saved on this device.</p>
+  <fieldset class="ropt"><legend>Text size</legend>
+   <label><input type="radio" name="rsize" value="0" checked> Normal</label>
+   <label><input type="radio" name="rsize" value="1"> Large</label>
+   <label><input type="radio" name="rsize" value="2"> Extra large</label>
+  </fieldset>
+  <fieldset class="ropt"><legend>Line spacing</legend>
+   <label><input type="radio" name="rspace" value="0" checked> Normal</label>
+   <label><input type="radio" name="rspace" value="1"> Roomy</label>
+  </fieldset>
  </div>
 </dialog>
 
@@ -316,11 +361,10 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 ;(() => {
   'use strict'
 
-  /* Set to true to actually pay the fan-milestone sponsor bonuses (+$20K / +$30K / +$50K).
-     The original game announced them but never paid them, so the default keeps the original balance. */
-  const PAY_MILESTONE_BONUSES = false
+  const VERSION = 4
 
   const STARTING = {
+    v: VERSION,
     turn: 1,
     turnsTotal: 8,
     cash: 250000,
@@ -329,8 +373,6 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     tsr: 60,
     morale: 70,
     rank: 3,
-    analysts: 0,
-    coaches: 0,
     merchPayoutNext: 0,
     sponsorDealNext: 0,
     negCashStreak: 0,
@@ -339,10 +381,15 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     seenTutorial: false,
     started: false,
     over: null,
-    lastResult: null,
     lastDelta: null,
     org: '',
-    comms: { hired: false, turn: null },
+    mgr: { hired: false, turn: null },
+    income: [],
+    prizeShare: 0,
+    onceShare: 0,
+    once: null,
+    moments: {},
+    notes: '',
     paper: null,
     feed: [],
     currentChoices: null
@@ -350,84 +397,156 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 
   const OPTIONS_POOL = {
     ops: [
-      { id: 'comms', special: true, name: 'Hire Communications Director', cost: 12000, salaries: 6000, flavor: 'A professional owns the club’s voice: steady fans, sponsor relations, and no PR fires.', desc: '+$6K/turn salaries. Required by Year 1, Quarter 3.' },
-      { id: 'analyst', name: 'Hire Performance Analyst', cost: 20000, tsr: 5, salaries: 5000, desc: 'TSR +5 this turn; +$5K/turn salaries. Improves team performance analysis.' },
-      { id: 'coach', name: 'Hire Assistant Coach', cost: 25000, tsr: 3, morale: 5, salaries: 6000, desc: 'TSR +3, Morale +5; +$6K/turn salaries. Helps with training and team culture.' },
-      { id: 'house', name: 'Upgrade Team House', cost: 40000, morale: 10, fans: 500, desc: 'Morale +10, Fans +500. Better facilities attract attention.' },
-      { id: 'equipment', name: 'New Gaming Equipment', cost: 15000, tsr: 4, desc: 'TSR +4. Latest hardware for competitive edge.' },
-      { id: 'nutritionist', name: 'Hire Sports Nutritionist', cost: 18000, morale: 8, salaries: 4000, desc: 'Morale +8; +$4K/turn salaries. Peak physical condition matters.' },
-      { id: 'facility', name: 'Lease Premium Facility', cost: 50000, tsr: 6, morale: 8, fans: 800, desc: 'TSR +6, Morale +8, Fans +800. Professional training environment.' },
-      { id: 'dataroom', name: 'Build Data Analytics Room', cost: 35000, tsr: 7, desc: 'TSR +7. Advanced stats and opponent analysis.' },
-      { id: 'mentalcoach', name: 'Hire Mental Performance Coach', cost: 22000, morale: 12, salaries: 5000, desc: 'Morale +12; +$5K/turn salaries. Handles pressure and mindset.' },
-      { id: 'bootcamp_facility', name: 'Bootcamp Facility Rental', cost: 12000, tsr: 5, morale: -3, desc: 'TSR +5, Morale -3. Intense environment for rapid improvement.' },
-      { id: 'chef', name: 'Hire Team Chef', cost: 20000, morale: 10, salaries: 4500, desc: 'Morale +10; +$4.5K/turn salaries. Quality meals boost team happiness.' },
-      { id: 'lean', name: 'Stay Lean', cost: 0, tsr: -2, desc: 'TSR -2. No infrastructure spend this quarter.' },
-      { id: 'manager', name: 'Hire Team Manager', cost: 30000, morale: 6, fans: 400, salaries: 7000, desc: 'Morale +6, Fans +400; +$7K/turn salaries. Handles logistics and PR.' },
-      { id: 'scrim_partner', name: 'Contract Scrim Partners', cost: 8000, tsr: 3, desc: 'TSR +3. Regular practice against quality opponents.' },
-      { id: 'streaming_setup', name: 'Professional Streaming Setup', chan: 'Twitch', cost: 25000, fans: 1200, desc: 'Fans +1,200. Content creation for brand growth.' },
-      { id: 'physio', name: 'Hire Physiotherapist', cost: 16000, morale: 7, salaries: 3500, desc: 'Morale +7; +$3.5K/turn salaries. Prevents injuries and fatigue.' },
-      { id: 'office', name: 'Open Office Space', cost: 45000, morale: 9, fans: 600, desc: 'Morale +9, Fans +600. Professional headquarters.' },
-      { id: 'software', name: 'Training Software Licenses', cost: 10000, tsr: 3, desc: 'TSR +3. Cutting-edge practice tools.' },
-      { id: 'consultant', name: 'Strategy Consultant (Contract)', cost: 28000, tsr: 6, desc: 'TSR +6. Expert advice, no permanent salary increase.' },
-      { id: 'minimal', name: 'Minimal Operations', cost: 0, desc: 'No operations spend. Save all resources.' },
-      { id: 'veteran', name: 'Sign Veteran Player (Sub)', cost: 35000, tsr: 8, morale: -5, salaries: 8000, desc: 'TSR +8, Morale -5; +$8K/turn salaries. Skill but potential ego clash.' }
+      { id: 'mgr', special: true, name: 'Hire Sponsorship Manager', cost: 12000, salaries: 6000, flavor: 'Finds and keeps sponsors. Required, and sponsors pay $3.5K more every quarter.', desc: '' },
+      { id: 'analyst', name: 'Hire Performance Analyst', cost: 20000, tsr: 5, salaries: 5000, desc: 'Studies the team’s games.' },
+      { id: 'coach', name: 'Hire Assistant Coach', cost: 25000, tsr: 3, morale: 5, salaries: 6000, desc: 'Helps with training and team culture.' },
+      { id: 'house', name: 'Upgrade Team House', cost: 40000, morale: 10, fans: 500, desc: 'Better facilities attract attention.' },
+      { id: 'equipment', name: 'New Gaming Equipment', cost: 15000, tsr: 4, desc: 'The latest hardware for a competitive edge.' },
+      { id: 'nutritionist', name: 'Hire Sports Nutritionist', cost: 18000, morale: 8, salaries: 4000, desc: 'Healthy players are happier players.' },
+      { id: 'facility', name: 'Lease Premium Facility', cost: 50000, tsr: 6, morale: 8, fans: 800, desc: 'A professional training environment.' },
+      { id: 'dataroom', name: 'Build Data Analytics Room', cost: 35000, tsr: 7, desc: 'Advanced stats and opponent analysis.' },
+      { id: 'mentalcoach', name: 'Hire Mental Performance Coach', cost: 22000, morale: 12, salaries: 5000, desc: 'Helps with pressure and mindset.' },
+      { id: 'bootcamp_facility', name: 'Bootcamp Facility Rental', cost: 12000, tsr: 5, morale: -3, desc: 'An intense place for fast improvement.' },
+      { id: 'chef', name: 'Hire Team Chef', cost: 20000, morale: 10, salaries: 4500, desc: 'Good meals boost team happiness.' },
+      { id: 'lean', name: 'Stay Lean', cost: 0, tsr: -2, desc: 'No spending on facilities this quarter.' },
+      { id: 'manager', name: 'Hire Team Manager', cost: 30000, morale: 6, fans: 400, salaries: 7000, desc: 'Handles travel and logistics.' },
+      { id: 'scrim_partner', name: 'Contract Scrim Partners', cost: 8000, tsr: 3, desc: 'Practice against good opponents.' },
+      { id: 'streaming_setup', name: 'Professional Streaming Setup', cost: 25000, fans: 1200, desc: 'Great content helps the brand grow.' },
+      { id: 'physio', name: 'Hire Physiotherapist', cost: 16000, morale: 7, salaries: 3500, desc: 'Prevents injuries and fatigue.' },
+      { id: 'office', name: 'Open Office Space', cost: 45000, morale: 9, fans: 600, desc: 'A real headquarters for the club.' },
+      { id: 'software', name: 'Training Software Licenses', cost: 10000, tsr: 3, desc: 'Better tools for practice.' },
+      { id: 'consultant', name: 'Strategy Consultant (Contract)', cost: 28000, tsr: 6, desc: 'Expert advice with no permanent salary.' },
+      { id: 'minimal', name: 'Minimal Operations', cost: 0, desc: 'Spend nothing and save your cash.' },
+      { id: 'veteran', name: 'Sign Veteran Player (Sub)', cost: 35000, tsr: 8, morale: -5, salaries: 8000, desc: 'Lots of skill, but egos can clash.' }
     ],
     mkt: [
-      { id: 'merch', name: 'Launch Fan Merchandise', cost: 25000, fans: 1000, payout: 10000, desc: '+1,000 fans now; +$10K revenue next turn. Store and products.' },
-      { id: 'local', name: 'Host Local Tournament', cost: 30000, fans: 2000, morale: 5, desc: 'Fans +2,000, Morale +5. Community engagement event.' },
-      { id: 'influencer', name: 'Influencer Partnership', cost: 20000, fans: 1500, desc: 'Fans +1,500. Social media collaboration.' },
-      { id: 'sponsor_hunt', name: 'Sponsor Acquisition Campaign', cost: 15000, payout: 25000, desc: '+$25K sponsor deal next turn. Proactive outreach.' },
-      { id: 'content_team', name: 'Hire Content Creator', cost: 28000, fans: 800, salaries: 5000, desc: 'Fans +800; +$5K/turn salaries. Consistent video/stream content.' },
-      { id: 'billboard', name: 'Billboard Advertising', cost: 35000, fans: 2500, desc: 'Fans +2,500. Big city visibility campaign.' },
-      { id: 'social_media', name: 'Social Media Blitz', chan: 'X', cost: 12000, fans: 1200, desc: 'Fans +1,200. Coordinated online campaign.' },
-      { id: 'charity', name: 'Charity Stream Event', cost: 18000, fans: 1800, morale: 6, desc: 'Fans +1,800, Morale +6. Positive brand image.' },
-      { id: 'documentary', name: 'Team Documentary Series', cost: 40000, fans: 3000, desc: 'Fans +3,000. Behind-the-scenes content.' },
-      { id: 'podcast', name: 'Start Team Podcast', cost: 8000, fans: 600, desc: 'Fans +600. Low-cost ongoing content.' },
-      { id: 'minimal', name: 'Minimal Marketing', cost: 0, desc: 'No marketing spend. Organic growth only.' },
-      { id: 'convention', name: 'Gaming Convention Booth', cost: 32000, fans: 2200, desc: 'Fans +2,200. Meet fans in person.' },
-      { id: 'giveaway', name: 'Fan Giveaway Campaign', cost: 15000, fans: 1400, desc: 'Fans +1,400. Prizes and engagement.' },
-      { id: 'rebrand', name: 'Brand Refresh & New Logo', cost: 22000, fans: 1000, morale: 4, desc: 'Fans +1,000, Morale +4. Fresh image energizes team and fans.' },
-      { id: 'esports_bar', name: 'Sponsor Esports Bar Events', cost: 20000, fans: 1600, desc: 'Fans +1,600. Partner with local venues.' },
-      { id: 'youtube', name: 'YouTube Channel Push', chan: 'YouTube', cost: 10000, fans: 900, desc: 'Fans +900. Video content strategy.' },
-      { id: 'press_release', name: 'Press Release Campaign', cost: 5000, fans: 500, desc: 'Fans +500. Traditional media outreach.' },
-      { id: 'fan_meetup', name: 'Fan Meetup Events', cost: 14000, fans: 1100, morale: 7, desc: 'Fans +1,100, Morale +7. Players meet supporters.' },
-      { id: 'tiktok', name: 'TikTok Marketing Campaign', cost: 11000, fans: 1300, desc: 'Fans +1,300. Short-form viral content.' },
-      { id: 'newsletter', name: 'Start Fan Newsletter', cost: 6000, fans: 400, desc: 'Fans +400. Email engagement strategy.' },
-      { id: 'twitch_series', name: 'Twitch Stream Series', chan: 'Twitch', cost: 14000, fans: 1100, desc: 'Fans +1,100. Weekly live matches and Q&A on Twitch.' },
-      { id: 'discord', name: 'Community Discord Nights', chan: 'Discord', cost: 7000, fans: 700, morale: 2, desc: 'Fans +700, Morale +2. A home base where fans and players mix.' },
-      { id: 'reddit_ama', name: 'Reddit AMA with the Roster', chan: 'Reddit', cost: 4000, fans: 450, desc: 'Fans +450. Fans ask, players answer, moderators keep order.' },
-      { id: 'linkedin', name: 'LinkedIn Sponsor Outreach', chan: 'LinkedIn', cost: 9000, fans: 300, payout: 12000, desc: 'Fans +300; +$12K sponsor deal next turn. Professional pitches to local partners.' }
+      { id: 'merch', name: 'Launch Fan Merchandise', cost: 25000, fans: 1000, payout: 10000, desc: 'Sell shirts and gear to fans.' },
+      { id: 'local', name: 'Host Local Tournament', cost: 30000, fans: 2000, morale: 5, desc: 'A community event.' },
+      { id: 'influencer', name: 'Influencer Partnership', cost: 20000, fans: 1500, desc: 'Team up with a social media star.' },
+      { id: 'sponsor_hunt', name: 'Sponsor Acquisition Campaign', cost: 15000, payout: 25000, desc: 'Reach out to new sponsors.' },
+      { id: 'content_team', name: 'Hire Content Creator', cost: 28000, fans: 800, salaries: 5000, desc: 'Steady video and stream content.' },
+      { id: 'billboard', name: 'Billboard Advertising', cost: 35000, fans: 2500, desc: 'Big visibility in the city.' },
+      { id: 'social_media', name: 'Social Media Blitz', cost: 12000, fans: 1200, desc: 'A coordinated online campaign.' },
+      { id: 'charity', name: 'Charity Stream Event', cost: 18000, fans: 1800, morale: 6, desc: 'Good for the club’s image.' },
+      { id: 'documentary', name: 'Team Documentary Series', cost: 40000, fans: 3000, desc: 'Behind-the-scenes videos.' },
+      { id: 'podcast', name: 'Start Team Podcast', cost: 8000, fans: 600, desc: 'Cheap content that keeps going.' },
+      { id: 'minimal', name: 'Minimal Marketing', cost: 0, desc: 'Spend nothing. Fans grow on their own.' },
+      { id: 'convention', name: 'Gaming Convention Booth', cost: 32000, fans: 2200, desc: 'Meet fans in person.' },
+      { id: 'giveaway', name: 'Fan Giveaway Campaign', cost: 15000, fans: 1400, desc: 'Prizes get fans excited.' },
+      { id: 'rebrand', name: 'Brand Refresh & New Logo', cost: 22000, fans: 1000, morale: 4, desc: 'A fresh look energizes the team and fans.' },
+      { id: 'esports_bar', name: 'Sponsor Esports Bar Events', cost: 20000, fans: 1600, desc: 'Partner with local venues.' },
+      { id: 'youtube', name: 'YouTube Channel Push', cost: 10000, fans: 900, desc: 'A video content plan.' },
+      { id: 'press_release', name: 'Press Release Campaign', cost: 5000, fans: 500, desc: 'Get the news media talking.' },
+      { id: 'fan_meetup', name: 'Fan Meetup Events', cost: 14000, fans: 1100, morale: 7, desc: 'Players meet their supporters.' },
+      { id: 'tiktok', name: 'TikTok Marketing Campaign', cost: 11000, fans: 1300, desc: 'Short videos that can go viral.' },
+      { id: 'newsletter', name: 'Start Fan Newsletter', cost: 6000, fans: 400, desc: 'Email updates for fans.' },
+      { id: 'twitch_series', name: 'Twitch Stream Series', cost: 14000, fans: 1100, desc: 'Weekly live matches and Q&A.' },
+      { id: 'discord', name: 'Community Discord Nights', cost: 7000, fans: 700, morale: 2, desc: 'A place where fans and players mix.' },
+      { id: 'reddit_ama', name: 'Reddit AMA with the Roster', cost: 4000, fans: 450, desc: 'Fans ask, players answer.' },
+      { id: 'linkedin', name: 'LinkedIn Sponsor Outreach', cost: 9000, fans: 300, payout: 12000, desc: 'Pitch local business partners.' }
     ],
     ply: [
-      { id: 'bootcamp', name: 'Intense Training Bootcamp', cost: 0, tsr: 8, morale: -10, desc: 'TSR +8, Morale -10. Grueling practice schedule.' },
-      { id: 'retreat', name: 'Team Bonding Retreat', cost: 10000, morale: 10, tsr: -3, desc: 'Morale +10, TSR -3. Leisure and team building.' },
-      { id: 'balanced', name: 'Balanced Schedule', cost: 0, tsr: 2, morale: 2, desc: 'TSR +2, Morale +2. Sustainable approach.' },
-      { id: 'vod_review', name: 'VOD Review Sessions', cost: 5000, tsr: 4, desc: 'TSR +4. Learn from past matches.' },
-      { id: 'scrims', name: 'Extra Scrim Blocks', cost: 8000, tsr: 6, morale: -4, desc: 'TSR +6, Morale -4. More practice time.' },
-      { id: 'vacation', name: 'Mandatory Team Vacation', cost: 20000, morale: 15, tsr: -5, desc: 'Morale +15, TSR -5. Rest and relaxation.' },
-      { id: 'individual_coaching', name: 'Individual Player Coaching', cost: 15000, tsr: 7, desc: 'TSR +7. Personalized skill development.' },
-      { id: 'team_activities', name: 'Weekly Team Activities', cost: 6000, morale: 8, desc: 'Morale +8. Bowling, escape rooms, etc.' },
-      { id: 'meditation', name: 'Meditation & Yoga Sessions', cost: 4000, morale: 6, desc: 'Morale +6. Mental clarity and stress relief.' },
-      { id: 'lan_bootcamp', name: 'LAN Bootcamp', cost: 12000, tsr: 9, morale: -6, desc: 'TSR +9, Morale -6. Intense offline practice.' },
-      { id: 'korean_bootcamp', name: 'Korean Bootcamp Trip', cost: 35000, tsr: 12, morale: -8, fans: 500, desc: 'TSR +12, Morale -8, Fans +500. Train in top region.' },
-      { id: 'light_practice', name: 'Light Practice Schedule', cost: 0, tsr: -1, morale: 5, desc: 'TSR -1, Morale +5. Recovery period.' },
-      { id: 'sports_psych', name: 'Sports Psychology Workshops', cost: 8000, morale: 9, tsr: 1, desc: 'Morale +9, TSR +1. Mental game training.' },
-      { id: 'opponent_prep', name: 'Opponent-Specific Prep', cost: 10000, tsr: 5, desc: 'TSR +5. Study next opponents deeply.' },
-      { id: 'internal_tournament', name: 'Internal Tournament', cost: 3000, tsr: 3, morale: 4, desc: 'TSR +3, Morale +4. Friendly competition.' },
-      { id: 'replay_analysis', name: 'Professional Replay Analysis', cost: 7000, tsr: 4, desc: 'TSR +4. Expert breakdown of gameplay.' },
-      { id: 'team_dinner', name: 'Weekly Team Dinners', cost: 4000, morale: 7, desc: 'Morale +7. Build chemistry over meals.' },
-      { id: 'music_room', name: 'Music & Recreation Room', cost: 12000, morale: 10, desc: 'Morale +10. Downtime space for players.' },
-      { id: 'no_practice', name: 'No Practice This Quarter', cost: 0, tsr: -4, morale: 8, desc: 'TSR -4, Morale +8. Full break from competitive.' },
-      { id: 'hybrid_schedule', name: 'Hybrid Training Schedule', cost: 5000, tsr: 4, morale: 3, desc: 'TSR +4, Morale +3. Mix of practice and rest.' }
+      { id: 'bootcamp', name: 'Intense Training Bootcamp', cost: 0, tsr: 8, morale: -10, desc: 'A very hard practice schedule.' },
+      { id: 'retreat', name: 'Team Bonding Retreat', cost: 10000, morale: 10, tsr: -3, desc: 'Time off to build the team.' },
+      { id: 'balanced', name: 'Balanced Schedule', cost: 0, tsr: 2, morale: 2, desc: 'A steady plan the team can keep up.' },
+      { id: 'vod_review', name: 'VOD Review Sessions', cost: 5000, tsr: 4, desc: 'Learn from past matches.' },
+      { id: 'scrims', name: 'Extra Scrim Blocks', cost: 8000, tsr: 6, morale: -4, desc: 'More practice time.' },
+      { id: 'vacation', name: 'Mandatory Team Vacation', cost: 20000, morale: 15, tsr: -5, desc: 'Rest and relaxation.' },
+      { id: 'individual_coaching', name: 'Individual Player Coaching', cost: 15000, tsr: 7, desc: 'One-on-one skill building.' },
+      { id: 'team_activities', name: 'Weekly Team Activities', cost: 6000, morale: 8, desc: 'Bowling, escape rooms and more.' },
+      { id: 'meditation', name: 'Meditation & Yoga Sessions', cost: 4000, morale: 6, desc: 'Stress relief and focus.' },
+      { id: 'lan_bootcamp', name: 'LAN Bootcamp', cost: 12000, tsr: 9, morale: -6, desc: 'Intense in-person practice.' },
+      { id: 'korean_bootcamp', name: 'Korean Bootcamp Trip', cost: 35000, tsr: 12, morale: -8, fans: 500, desc: 'Train in a top region.' },
+      { id: 'light_practice', name: 'Light Practice Schedule', cost: 0, tsr: -1, morale: 5, desc: 'A recovery period.' },
+      { id: 'sports_psych', name: 'Sports Psychology Workshops', cost: 8000, morale: 9, tsr: 1, desc: 'Train the mental game.' },
+      { id: 'opponent_prep', name: 'Opponent-Specific Prep', cost: 10000, tsr: 5, desc: 'Study the next opponents.' },
+      { id: 'internal_tournament', name: 'Internal Tournament', cost: 3000, tsr: 3, morale: 4, desc: 'Friendly competition.' },
+      { id: 'replay_analysis', name: 'Professional Replay Analysis', cost: 7000, tsr: 4, desc: 'An expert breaks down the games.' },
+      { id: 'team_dinner', name: 'Weekly Team Dinners', cost: 4000, morale: 7, desc: 'Build chemistry over meals.' },
+      { id: 'music_room', name: 'Music & Recreation Room', cost: 12000, morale: 10, desc: 'A place to relax.' },
+      { id: 'no_practice', name: 'No Practice This Quarter', cost: 0, tsr: -4, morale: 8, desc: 'A full break from competing.' },
+      { id: 'hybrid_schedule', name: 'Hybrid Training Schedule', cost: 5000, tsr: 4, morale: 3, desc: 'A mix of practice and rest.' }
     ]
   }
 
-  const CATS = [
-    { key: 'ops', icon: '🛠️', title: 'Operations', sub: 'Infrastructure & support staff', label: 'Operations' },
-    { key: 'mkt', icon: '📣', title: 'Marketing', sub: 'Grow your fanbase & revenue', label: 'Marketing' },
-    { key: 'ply', icon: '🎯', title: 'Player Focus', sub: 'Training & team culture', label: 'Player Focus' }
+  /* One Chapter 13 decision at the start of every quarter. */
+  const MOMENTS = [
+    { topic: 'Revenue streams', title: 'Where does a club’s money come from?',
+      concept: 'A club earns money from sponsors, prize money, and fans (tickets and merch). Most clubs lean on one stream first. Which will you build around this year?',
+      opts: [
+        { name: 'Win more tournaments', blurb: 'Prize money rises with your skill.', eff: { tsr: 4 }, recap: 'The club is building around prize money.' },
+        { name: 'Chase local sponsors', blurb: 'Small, steady checks from nearby businesses.', eff: { income: { group: 'local', label: 'Local sponsors', base: 2000 } }, recap: 'Local sponsors now add $2,000 every quarter.' },
+        { name: 'Grow the fanbase', blurb: 'More fans help every other stream later.', eff: { fans: 1500 }, recap: 'A bigger fanbase is the base for tickets, merch and sponsors.' }
+      ] },
+    { topic: 'How pro players get paid', title: 'Pick a pay plan for your players',
+      concept: 'Pros are usually paid a base salary (a fixed cost) plus a share of prize money (a variable cost that only shows up when you win). Salaries feel safer to players. Shares reward winning.',
+      opts: [
+        { name: 'Salary only', blurb: 'Safe for players. You pay it win or lose.', eff: { salaries: 6000, morale: 6, prizeShare: 0 }, recap: 'Players are on salary only, so payroll is higher every quarter, win or lose.' },
+        { name: 'Salary + 10% prize share', blurb: 'A balanced mix.', eff: { salaries: 2000, morale: 3, prizeShare: 0.10 }, recap: 'Players get a small raise plus 10% of prize money.' },
+        { name: 'Low salary + 25% prize share', blurb: 'Cheap when you lose. Costly when you win big.', eff: { salaries: -6000, morale: -2, prizeShare: 0.25 }, recap: 'Payroll is lower, but players now take 25% of every prize.' }
+      ] },
+    { topic: 'Running a team', title: 'Your star player wants a raise',
+      concept: 'Contracts are a big part of running a team. A star can raise your win chance, but a raise is a cost you pay again every quarter. A win bonus only costs money when you win.',
+      opts: [
+        { name: 'Give the raise', blurb: 'Keep the star happy and sharp.', eff: { salaries: 5000, tsr: 4 }, recap: 'The star re-signed with a raise: +$5,000 in fixed costs and a stronger team.' },
+        { name: 'Offer a win bonus', blurb: 'A small raise plus 5% more prize share.', eff: { salaries: 1000, tsr: 3, morale: 2, prizeShareAdd: 0.05 }, recap: 'The star took a win bonus: a small raise plus 5% more of the prize money.' },
+        { name: 'Let the star go', blurb: 'Saves money. The team gets weaker.', eff: { salaries: -3000, tsr: -5 }, recap: 'The star left. Payroll dropped, and so did team skill.' }
+      ] },
+    { topic: 'Sponsorships', title: 'Three sponsors, three kinds of deals',
+      concept: 'A flat deal pays the same every quarter. A performance deal pays a small base plus a bonus for each win. A fan-based deal pays more as your fanbase grows. Pick one deal for the rest of the season.',
+      opts: [
+        { name: 'Flat fee deal', blurb: 'Steady and easy to plan around.', eff: { income: { group: 'sponsor', label: 'Flat sponsor deal', base: 6000 } }, recap: 'A flat sponsor deal now pays $6,000 every quarter.' },
+        { name: 'Performance deal', blurb: 'Pays more when you win, less when you lose.', eff: { income: { group: 'sponsor', label: 'Performance sponsor', base: 2000, perWin: 9000 } }, recap: 'A performance sponsor pays $2,000 every quarter plus $9,000 for each win.' },
+        { name: 'Fan-based deal', blurb: 'Grows as your fanbase grows.', eff: { income: { group: 'sponsor', label: 'Fan-based sponsor', perK: 800 } }, recap: 'A fan-based sponsor pays $800 for every 1,000 fans, each quarter.' }
+      ] },
+    { topic: 'Player streaming', title: 'Your players want to stream',
+      concept: 'Many pros earn money by streaming. A club can let players keep it all, take a cut, or run one team channel. More club income can mean less happy players.',
+      opts: [
+        { name: 'Players keep everything', blurb: 'Happy players. No money for the club.', eff: { morale: 5, fans: 800 }, recap: 'Players keep their stream money, which lifted morale and brought new fans.' },
+        { name: 'Club takes a 20% cut', blurb: 'A fair split for both sides.', eff: { morale: 1, fans: 500, income: { group: 'stream', label: 'Stream cut', base: 2500 } }, recap: 'The club takes a 20% cut of stream money: $2,500 every quarter.' },
+        { name: 'One team channel only', blurb: 'Most money for the club. Players grumble.', eff: { morale: -4, fans: 300, income: { group: 'stream', label: 'Team channel', base: 4500 } }, recap: 'One team channel brings in $4,500 every quarter, but players are unhappy.' }
+      ] },
+    { topic: 'Sponsor activations', title: 'Sponsors want something for their money',
+      concept: 'Sponsors expect “activations”: posts, event appearances and logos on gear. Good activations keep sponsors happy and can earn bonuses. Skipping them can cost you.',
+      opts: [
+        { name: 'Full activation plan', blurb: 'Costs $8,000 now. Sponsors add a bonus every quarter.', eff: { once: { cost: 8000, label: 'Sponsor activations' }, income: { group: 'activation', label: 'Sponsor bonus', base: 4000 } }, recap: 'A full activation plan cost $8,000, and sponsors now add $4,000 every quarter.' },
+        { name: 'Basic activation plan', blurb: 'Costs $3,000 now. A smaller bonus every quarter.', eff: { once: { cost: 3000, label: 'Sponsor activations' }, income: { group: 'activation', label: 'Sponsor bonus', base: 1500 } }, recap: 'A basic activation plan cost $3,000, and sponsors add $1,500 every quarter.' },
+        { name: 'Skip activations', blurb: 'Free now. Sponsors pay less.', eff: { income: { group: 'activation', label: 'Unhappy sponsors', base: -2000 } }, recap: 'Skipping activations left sponsors unhappy: $2,000 less every quarter.' }
+      ] },
+    { topic: 'Pricing', title: 'Set the ticket price for your home event',
+      concept: 'Your arena holds 1,000 fans and the event costs $4,000 to run. Price too low and you leave money on the table. Price too high and seats stay empty.',
+      opts: [
+        { name: '$10 tickets', blurb: '1,000 fans attend. It sells out.', eff: { fans: 400, once: { rev: 10000, cost: 4000, label: 'Home event' } }, recap: 'At $10, 1,000 fans came and the event earned $10,000 before costs.' },
+        { name: '$20 tickets', blurb: 'About 750 fans attend.', eff: { fans: 150, once: { rev: 15000, cost: 4000, label: 'Home event' } }, recap: 'At $20, about 750 fans came and the event earned $15,000 before costs.' },
+        { name: '$40 tickets', blurb: 'Only about 300 fans attend.', eff: { fans: -100, once: { rev: 12000, cost: 4000, label: 'Home event' } }, recap: 'At $40, only about 300 fans came and the event earned $12,000 before costs.' }
+      ] },
+    { topic: 'Splitting the prize money', title: 'The World Finals prize pool',
+      concept: 'Before a big final, many clubs promise players a bonus pool from the prize money. Bigger bonuses lift morale, but they only get paid if you win.',
+      opts: [
+        { name: 'No bonus pool', blurb: 'Keep every dollar. Players are not thrilled.', eff: { morale: -3 }, recap: 'No bonus pool was offered, and players were a little unhappy.' },
+        { name: '10% bonus pool', blurb: 'A fair thank-you if you win.', eff: { morale: 3, onceShare: 0.10 }, recap: 'Players were promised 10% of this quarter’s prize money.' },
+        { name: '25% bonus pool', blurb: 'Big motivation. Big cost if you win.', eff: { morale: 8, onceShare: 0.25 }, recap: 'Players were promised 25% of this quarter’s prize money.' }
+      ] }
   ]
 
+  /* Optional supports for each Chapter 13 decision (shown in a collapsed "Need help?" drawer). */
+  const MOMENT_HELP = [
+    { help: { words: [['Revenue stream', 'One way a club earns money.'], ['Prize money', 'Money paid to the winners of a tournament.']], real: 'Real esports clubs usually mix several streams: sponsors, prize money, merchandise, streaming and tickets.', talk: 'Why might a club not want to depend on just one stream?' }, idea: 'Spreading income across streams lowers risk.' },
+    { help: { words: [['Base salary', 'Guaranteed pay, win or lose.'], ['Prize share', 'A percent of prize money paid to players.']], real: 'Pay plans differ by team and by game. Many players get a base salary plus bonuses or a share of prizes.', talk: 'Which plan would you pick as a player? Which as the owner?' }, idea: 'Salaries are fixed costs. Prize shares are variable costs that rise and fall with winning.' },
+    { help: { words: [['Contract', 'An agreement about pay and how long it lasts.'], ['Win bonus', 'Extra pay that is only paid when the team wins.']], real: 'Teams use contracts to keep their key players.', talk: 'When is one star player worth a raise?' }, idea: 'A raise is a fixed cost you pay every quarter. A bonus only costs money when you win.' },
+    { help: { words: [['Flat deal', 'The same payment every quarter.'], ['Performance deal', 'Pay that depends on results.'], ['Fan-based deal', 'Pay that depends on audience size.']], real: 'Clubs and sponsors negotiate deal terms. Some pay a flat fee, and others tie pay to results or audience.', talk: 'Which deal is the safest? Which could pay the most?' }, idea: 'Flat deals are steady. Deals tied to wins or fans carry more risk and more upside.' },
+    { help: { words: [['Creator income', 'Money a player earns from streaming.'], ['Revenue cut', 'The percent of income a club keeps.']], real: 'Many players and clubs earn money from streaming and online content.', talk: 'How might a revenue cut change how players feel about the club?' }, idea: 'More income for the club can cost you in morale. Every deal has trade-offs.' },
+    { help: { words: [['Activation', 'Work a club does for a sponsor, like posts or appearances.'], ['Renewal', 'A sponsor agreeing to keep paying.']], real: 'Sponsors expect clubs to deliver content and appearances, not just wear a logo.', talk: 'Is spending $8,000 now worth it to earn more later?' }, idea: 'Spending now to earn more later is an investment. Check that it pays back before the season ends.' },
+    { help: { words: [['Price', 'What a customer pays.'], ['Demand', 'How many people want to buy at that price.']], real: 'Event organizers choose ticket prices that balance crowd size and revenue.', talk: 'Why did the highest price not earn the most money?' }, idea: 'A higher price does not always mean more money. Demand drops when the price rises.' },
+    { help: { words: [['Prize pool', 'The total money a tournament pays out.'], ['Bonus pool', 'Part of the prize promised to players.']], real: 'Prize money is often shared between the organization and the players.', talk: 'How much of a big prize would you share with your players?' }, idea: 'A bonus pool is a variable cost. It only costs you when you win.' }
+  ]
+  MOMENTS.forEach((m, i) => Object.assign(m, MOMENT_HELP[i]))
+
+  const CATS = [
+    { key: 'ops', icon: '🛠️', title: 'Operations', sub: 'Staff and facilities' },
+    { key: 'mkt', icon: '📣', title: 'Marketing', sub: 'Grow your fans and income' },
+    { key: 'ply', icon: '🎯', title: 'Player Focus', sub: 'Training and team spirit' }
+  ]
 
   const LEAGUE = 'The League Ledger'
   const RIVAL = 'Iron Wolves'
@@ -442,25 +561,11 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     { name: 'Grand Prix', opp: RIVAL },
     { name: 'World Finals', opp: 'Apex Dynasty' }
   ]
-  const CAST = { captain: 'Riley “Vex” Okafor', coach: 'Coach Dana Marlow', reporter: 'Priya Nandakumar' }
-  const NEED = { 3: { tsr: 70, fans: 7000, next: 'Challenger' }, 2: { tsr: 80, fans: 12000, next: 'Elite' } }
+  const CAST = { reporter: 'Priya Nandakumar' }
   const DEFAULT_ORG = 'Lakeshore Lynx'
-  CAST.comms = 'Morgan Reyes'
-  /* Communications director: required by COMMS_DEADLINE, and it matters. */
-  const COMMS_DEADLINE = 3      // turn by which the hire is forced
-  const COMMS_FANS = 300        // fans gained every turn once hired
-  const COMMS_REV = 2500        // sponsor-relations revenue every turn once hired
-  const CHANNEL_BOOST = 1.25    // multiplier on fans from channel campaigns once hired
-  const INCIDENT_P = 0.4        // chance of a PR incident each turn (from turn 2) with no director
-  const INCIDENT_COST = 8000
-  const INCIDENT_FANS = 0.04
-  const INCIDENTS = [
-    { head: 'RUMOR RACES THROUGH DISCORD AS CLUB STAYS SILENT', feed: 'Rumor spread unchecked', deck: 'Nobody at the club confirmed or denied it, so the fans wrote the story themselves.', body: 'A rumor about a roster change spread across Discord for two days before anyone at the club confirmed or denied it. By the time a statement appeared, fans had already decided what happened.' },
-    { head: 'PLAYER’S LATE-NIGHT POST SPARKS BACKLASH', feed: 'Player post went viral', deck: 'With no one to guide the reply, the club let the story run.', body: 'A player’s late-night post drew angry replies, and there was nobody to coach them on what to say next or to speak for the club. The thread kept growing overnight.' },
-    { head: 'SPONSOR LEARNS OF SCHEDULE CHANGE FROM A REPORTER', feed: 'Sponsor left in the dark', deck: 'A partner heard it from the press first, and said so.', body: 'A sponsor found out about a schedule change from a reporter instead of from the club. “We expect to hear it from you first,” the sponsor’s representative said.' },
-    { head: 'LEAKED SCRIM CLIPS EMBARRASS THE CLUB', feed: 'Private clips leaked', deck: 'Practice footage went public, and no one owned the response.', body: 'Private scrim footage leaked online, and there was no plan for who would answer questions. Confidential practice information is now public.' }
-  ]
-
+  /* The sponsorship manager is required by MGR_DEADLINE. */
+  const MGR_DEADLINE = 3        // quarter by which the hire is forced
+  const MGR_REV = 3500          // extra sponsor money every quarter once hired
   const TRAVEL = 5000
   const PRIZE = { 1: 60000, 2: 35000, 3: 20000 }
 
@@ -468,24 +573,31 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 
   const $ = id => document.getElementById(id)
   const $desk = $('desk'), $feed = $('feed'), $steps = $('steps'), $rings = $('rings'), $chips = $('chips')
-  const $dlg = $('glossary')
+  const $dlg = $('glossary'), $rdlg = $('readopts')
 
   function fresh(){ return JSON.parse(JSON.stringify(STARTING)) }
   const fmtMoney = n => (n < 0 ? '−$' : '$') + Math.abs(Math.round(n)).toLocaleString()
   const sign = n => (n >= 0 ? '+' : '−')
+  const signed = v => (v >= 0 ? '+' : '−') + fmtMoney(Math.abs(v))
   const short = n => { const a = Math.abs(n); const s = a >= 1000 ? '$' + (a / 1000).toString().replace(/\.0$/, '') + 'K' : '$' + a; return n < 0 ? '−' + s : s }
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
   const rankName = t => t === 1 ? 'Tier 1 (Elite)' : t === 2 ? 'Tier 2 (Challenger)' : 'Tier 3 (Rookie)'
+  const tierShort = r => r === 1 ? 'Elite' : r === 2 ? 'Challenger' : 'Rookie'
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
   const displayName = () => (S.name && S.name.trim()) ? S.name.trim() : 'Manager X'
   const orgName = () => (S.org && S.org.trim()) ? S.org.trim() : DEFAULT_ORG
-  const tierShort = r => r === 1 ? 'Elite' : r === 2 ? 'Challenger' : 'Rookie'
-  const pk = arr => arr[Math.floor(Math.random() * arr.length)]
+  const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  function focusEl(el){
+    if (!el) return
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1')
+    try { el.focus({ preventScroll: true }) } catch (_) {}
+    el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' })
+  }
+  const mgrHired = () => !!(S.mgr && S.mgr.hired)
   function turnInfo(t){
     const i = clamp(t - 1, 0, 7)
     return { name: TOURNEYS[i].name, opp: TOURNEYS[i].opp, season: SEASONS[i % 4], year: Math.floor(i / 4) + 1, q: (i % 4) + 1 }
   }
-  const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   function shuffle(a){
     const arr = [...a]
@@ -496,12 +608,11 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     return arr
   }
   function pickChoices(){
-    const hired = !!(S.comms && S.comms.hired)
     const pool = OPTIONS_POOL.ops.filter(o => !o.special)
     let ops
-    if (hired) ops = shuffle(pool).slice(0, 3).map(o => o.id)
-    else if (S.turn >= COMMS_DEADLINE) ops = ['comms']
-    else ops = ['comms'].concat(shuffle(pool).slice(0, 2).map(o => o.id))
+    if (mgrHired()) ops = shuffle(pool).slice(0, 3).map(o => o.id)
+    else if (S.turn >= MGR_DEADLINE) ops = ['mgr']
+    else ops = ['mgr'].concat(shuffle(pool).slice(0, 2).map(o => o.id))
     return {
       ops,
       mkt: shuffle(OPTIONS_POOL.mkt).slice(0, 3).map(o => o.id),
@@ -513,8 +624,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
   /* Choices are saved as ids so a page refresh does not re-roll the options. */
   function ensureChoices(){
     const c = S.currentChoices
-    const hired = !!(S.comms && S.comms.hired)
-    const forced = !hired && S.turn >= COMMS_DEADLINE
+    const forced = !mgrHired() && S.turn >= MGR_DEADLINE
     const shapeOk = c && ['ops', 'mkt', 'ply'].every(k => Array.isArray(c[k])) && c.mkt.length === 3 && c.ply.length === 3 && c.ops.length === (forced ? 1 : 3)
     if (shapeOk){
       const norm = {}
@@ -523,8 +633,8 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
         norm[k] = c[k].map(x => (x && typeof x === 'object') ? x.id : x)
         if (!norm[k].every(id => findOpt(k, id))) valid = false
       })
-      const hasComms = norm.ops.includes('comms')
-      if (valid && (hired ? !hasComms : hasComms)){ S.currentChoices = norm; return }
+      const hasMgr = norm.ops.includes('mgr')
+      if (valid && (mgrHired() ? !hasMgr : hasMgr)){ S.currentChoices = norm; return }
     }
     S.currentChoices = pickChoices()
   }
@@ -537,11 +647,104 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
   function save(){ try { localStorage.setItem('autosave', JSON.stringify(S)) } catch (_) {} }
   function loadAuto(){ try { return JSON.parse(localStorage.getItem('autosave') || 'null') } catch (_) { return null } }
 
+  /* ---------- Chapter 13 decisions ---------- */
+  function applyEffects(e){
+    if (e.salaries) S.salaries += e.salaries
+    if (e.tsr) S.tsr = clamp(S.tsr + e.tsr, 0, 100)
+    if (e.morale) S.morale = clamp(S.morale + e.morale, 0, 100)
+    if (e.fans) S.fans = Math.max(0, S.fans + e.fans)
+    if (e.income) S.income = S.income.filter(x => x.group !== e.income.group).concat([Object.assign({}, e.income)])
+    if (e.prizeShare !== undefined) S.prizeShare = e.prizeShare
+    if (e.prizeShareAdd) S.prizeShare = Math.min(0.5, S.prizeShare + e.prizeShareAdd)
+    if (e.once) S.once = { rev: e.once.rev || 0, cost: e.once.cost || 0, label: e.once.label || '' }
+    if (e.onceShare) S.onceShare = e.onceShare
+  }
+
+  /* Money from sponsor-style income entries, using the same math for the preview and the real quarter. */
+  function incomeFor(fans, won){
+    return S.income.reduce((sum, e) => sum + (e.base || 0) + (won ? (e.perWin || 0) : 0) + Math.round(((e.perK || 0) * fans) / 1000), 0)
+  }
+
+  function effectChips(e){
+    const out = []
+    const stat = (label, v) => { if (v) out.push(`<span class="chip ${v > 0 ? 'ok' : 'bad'}">${label} ${v > 0 ? '+' : '−'}${Math.abs(v).toLocaleString()}</span>`) }
+    if (e.salaries) out.push(`<span class="chip ${e.salaries > 0 ? 'warn' : 'ok'}">${e.salaries > 0 ? '+' : '−'}${short(Math.abs(e.salaries))} fixed cost every quarter</span>`)
+    if (e.prizeShare !== undefined) out.push(`<span class="chip ${e.prizeShare > 0 ? 'warn' : 'ok'}">Players get ${Math.round(e.prizeShare * 100)}% of prize money</span>`)
+    if (e.prizeShareAdd) out.push(`<span class="chip warn">+${Math.round(e.prizeShareAdd * 100)}% of prize money to players</span>`)
+    if (e.onceShare) out.push(`<span class="chip warn">Players get ${Math.round(e.onceShare * 100)}% of this quarter’s prize</span>`)
+    if (e.income){
+      const i = e.income
+      if (i.base) out.push(`<span class="chip ${i.base > 0 ? 'ok' : 'bad'}">${i.base > 0 ? '+' : '−'}${short(Math.abs(i.base))} every quarter</span>`)
+      if (i.perWin) out.push(`<span class="chip ok">+${short(i.perWin)} for each win</span>`)
+      if (i.perK) out.push(`<span class="chip ok">${short(i.perK)} per 1,000 fans, every quarter</span>`)
+    }
+    if (e.once){
+      if (e.once.rev) out.push(`<span class="chip ok">Event earns ${short(e.once.rev)}</span>`)
+      if (e.once.cost) out.push(`<span class="chip warn">One-time cost ${short(e.once.cost)}</span>`)
+    }
+    stat('TSR', e.tsr); stat('Morale', e.morale); stat('Fans', e.fans)
+    if (!out.length) out.push('<span class="chip">No change</span>')
+    return out.join(' ')
+  }
+
+  function phaseInfo(){
+    const t = S.turn
+    if (t <= 2) return { n: 1, name: 'Learn the basics', goal: 'Keep cash above $150,000 through Quarter 2.', ok: S.cash >= 150000, yes: 'On track', no: 'Behind' }
+    if (t <= 6) return { n: 2, name: 'Grow the club', goal: 'Reach Tier 2 (Challenger) by Quarter 6.', ok: S.rank <= 2, yes: 'Done ✓', no: 'In progress' }
+    return { n: 3, name: 'The finals push', goal: 'Finish with positive cash and the highest tier you can.', ok: S.cash >= 0, yes: 'On track', no: 'Behind' }
+  }
+
+  /* ---------- reading options (saved on this device) ---------- */
+  const PREFS_KEY = 'esportsPrefs'
+  let prefs = { size: 0, space: 0 }
+  function loadPrefs(){
+    try {
+      const p = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null')
+      if (p) prefs = { size: clamp(+p.size || 0, 0, 2), space: clamp(+p.space || 0, 0, 1) }
+    } catch (_) {}
+  }
+  function savePrefs(){ try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)) } catch (_) {} }
+  function applyPrefs(){
+    const h = document.documentElement
+    h.classList.remove('ts-1', 'ts-2', 'ls-1')
+    if (prefs.size) h.classList.add('ts-' + prefs.size)
+    if (prefs.space) h.classList.add('ls-1')
+    document.querySelectorAll('input[name="rsize"]').forEach(r => { r.checked = (+r.value === prefs.size) })
+    document.querySelectorAll('input[name="rspace"]').forEach(r => { r.checked = (+r.value === prefs.space) })
+  }
+
+  /* ---------- read aloud (only shown when the browser supports it) ---------- */
+  const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function'
+  function stopSpeak(){
+    if (canSpeak){ try { window.speechSynthesis.cancel() } catch (_) {} }
+    document.querySelectorAll('[data-listen]').forEach(b => { b.textContent = '🔊 Listen'; b.setAttribute('aria-pressed', 'false') })
+  }
+  function speak(text, btn){
+    if (!canSpeak || !text) return
+    const wasOn = btn.getAttribute('aria-pressed') === 'true'
+    stopSpeak()
+    if (wasOn) return
+    const u = new window.SpeechSynthesisUtterance(text)
+    u.lang = 'en-US'; u.rate = 0.95
+    u.onend = u.onerror = () => { btn.textContent = '🔊 Listen'; btn.setAttribute('aria-pressed', 'false') }
+    btn.textContent = '⏹ Stop'; btn.setAttribute('aria-pressed', 'true')
+    window.speechSynthesis.speak(u)
+  }
+  const listenBtn = which => canSpeak ? `<button class="btn sm ghost" type="button" data-listen="${which}" aria-pressed="false">🔊 Listen</button>` : ''
+  function textFor(which){
+    if (which === 'paper'){
+      const p = S.paper || (S.turn === 1 ? launchPaper() : statusPaper())
+      return [p.headline.toLowerCase(), p.deck].concat(p.paras, p.next ? [p.next.lines.join(' '), p.next.tip || ''] : []).join('. ')
+    }
+    const mo = MOMENTS[S.turn - 1]
+    if (!mo) return ''
+    return `${mo.title}. ${mo.concept} ` + mo.opts.map((o, i) => `Option ${i + 1}: ${o.name}. ${o.blurb}`).join(' ')
+  }
+
   /* ---------- header ---------- */
   function ringSvg(label, value, max, color, delta){
     const C = 2 * Math.PI * 22
-    const frac = clamp(value / max, 0, 1)
-    const off = C * (1 - frac)
+    const off = C * (1 - clamp(value / max, 0, 1))
     let d = ''
     if (delta !== null && delta !== undefined && delta !== 0){
       d = `<span class="delta ${delta > 0 ? 'up' : 'down'}">${delta > 0 ? '+' : '−'}${Math.abs(delta).toLocaleString()}</span>`
@@ -553,8 +756,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
   }
 
   function renderHeader(){
-    $('subline').textContent = S.started ? `${orgName()} · GM ${displayName()}` : 'Esports Company Management'
-    const cur = Math.min(S.turn, S.turnsTotal)
+    $('subline').textContent = S.started ? `${orgName()} · GM ${displayName()}` : 'Esports Finance Basics'
     $steps.innerHTML = Array.from({ length: S.turnsTotal }, (_, i) => {
       const t = i + 1
       let cls = ''
@@ -573,15 +775,14 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
       ringSvg('Morale', S.morale, 100, moraleColor, dl.morale) +
       ringSvg('Fans', S.fans, 20000, '#7c3aed', dl.fans)
 
-    const cashCls = S.cash < 0 ? 'bad' : 'ok'
     $chips.innerHTML =
-      `<span class="chip ${cashCls}">💰 ${fmtMoney(S.cash)}</span>` +
-      `<span class="chip ${S.comms && S.comms.hired ? 'ok' : 'warn'}">🎙️ Comms desk: ${S.comms && S.comms.hired ? 'staffed' : 'empty'}</span>` +
+      `<span class="chip ${S.cash < 0 ? 'bad' : 'ok'}">💰 Cash ${fmtMoney(S.cash)}</span>` +
+      `<span class="chip ${mgrHired() ? 'ok' : 'warn'}">🤝 Sponsorship manager: ${mgrHired() ? 'hired' : 'not hired'}</span>` +
       `<span class="chip">🏆 ${rankName(S.rank)}</span>` +
-      `<span class="chip">🧾 Salaries ${fmtMoney(S.salaries)}/turn</span>`
+      `<span class="chip">🧾 Fixed costs ${fmtMoney(S.salaries)} a quarter</span>`
   }
 
-  /* ---------- feed ---------- */
+  /* ---------- quarter log ---------- */
   function postHtml(p, isNew){
     return `<div class="post ${p.k || ''}${isNew ? ' pop' : ''}"><span class="av" aria-hidden="true">${p.av || '💬'}</span><div><span class="tq">${esc(p.q || '')}</span><br><b>${esc(p.h)}</b>${(p.p || []).map(t => `<p>${esc(t)}</p>`).join('')}</div></div>`
   }
@@ -599,29 +800,20 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
   /* ---------- option cards ---------- */
   function chipsFor(o){
     const out = []
-    const hired = !!(S.comms && S.comms.hired)
-    const fansVal = Math.round((o.fans || 0) * (hired && o.chan ? CHANNEL_BOOST : 1))
     const eff = (label, v) => {
       if (!v) return
       out.push(`<span class="chip ${v > 0 ? 'ok' : 'bad'}">${label} ${v > 0 ? '+' : '−'}${Math.abs(v).toLocaleString()}</span>`)
     }
+    if (o.id === 'mgr') out.push(`<span class="chip new">Required by Quarter ${MGR_DEADLINE}</span>`)
     eff('TSR', o.tsr)
     eff('Morale', o.morale)
-    eff('Fans', fansVal)
-    if (o.salaries) out.push(`<span class="chip warn">+${short(o.salaries)}/turn salaries</span>`)
-    if (o.payout) out.push(`<span class="chip new">+${short(o.payout)} next turn</span>`)
-    if (o.id === 'comms'){
-      out.push(`<span class="chip new">Required by Q${COMMS_DEADLINE}</span>`)
-      out.push(`<span class="chip ok">+${COMMS_FANS} fans / turn</span>`)
-      out.push(`<span class="chip ok">+${short(COMMS_REV)} sponsors / turn</span>`)
-      out.push(`<span class="chip ok">Stops PR incidents</span>`)
-      out.push(`<span class="chip ok">Channels +${Math.round((CHANNEL_BOOST - 1) * 100)}%</span>`)
-    }
-    if (o.chan) out.push(`<span class="chip ${hired ? 'new' : ''}">📡 ${o.chan}${hired ? ` · amplified +${Math.round((CHANNEL_BOOST - 1) * 100)}%` : ''}</span>`)
-    if (!out.length) out.push('<span class="chip">No stat change</span>')
+    eff('Fans', o.fans)
+    if (o.salaries) out.push(`<span class="chip warn">+${short(o.salaries)} fixed cost every quarter</span>`)
+    if (o.id === 'mgr') out.push(`<span class="chip ok">+${short(MGR_REV)} sponsor money every quarter</span>`)
+    if (o.payout) out.push(`<span class="chip new">Pays ${short(o.payout)} next quarter</span>`)
+    if (!out.length) out.push('<span class="chip">No change</span>')
     return out.join(' ')
   }
-  const flavor = o => { if (o.flavor) return o.flavor; const parts = o.desc.split('. '); return parts.length > 1 ? parts[parts.length - 1] : o.desc }
 
   function optionsHtml(cat){
     return S.currentChoices[cat.key].map(id => {
@@ -632,7 +824,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
         <span class="nm">${esc(o.name)}</span>
         <span class="price">${o.cost > 0 ? fmtMoney(o.cost) : 'Free'}</span>
         <span class="chs">${chipsFor(o)}</span>
-        <span class="fl">${esc(flavor(o))}</span>
+        <span class="fl">${esc(o.flavor || o.desc)}</span>
       </label>`
     }).join('')
   }
@@ -642,19 +834,23 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     return r ? r.value : null
   }
 
-  /* What this plan would do, using the same formulas as the real turn (without the dice roll). */
+  /* What this plan would do, using the same formulas as the real quarter (without the dice roll). */
   function projectPlan(opsId, mktId, plyId){
     const o = findOpt('ops', opsId), m = findOpt('mkt', mktId), p = findOpt('ply', plyId)
-    const has = !!(S.comms && S.comms.hired) || o.id === 'comms'
+    const has = mgrHired() || o.id === 'mgr'
     const tsr = clamp(Math.round(S.tsr + (o.tsr || 0) + (p.tsr || 0)), 0, 100)
     const morale = clamp(Math.round(S.morale + (o.morale || 0) + (m.morale || 0) + (p.morale || 0)), 0, 100)
+    const fansNow = S.fans + (o.fans || 0) + (m.fans || 0) + (p.fans || 0)
     const salaries = S.salaries + (o.salaries || 0) + (m.salaries || 0)
     const spend = (o.cost || 0) + (m.cost || 0) + (p.cost || 0)
     const pWin = clamp((tsr * (morale / 100)) / 60, 0.05, 0.95)
     const sponsors = Math.round((S.rank === 1 ? 30000 : S.rank === 2 ? 18000 : 9000) + Math.max(0, tsr - 50) * 120)
-    const revenue = sponsors + (has ? COMMS_REV : 0) + S.merchPayoutNext + S.sponsorDealNext
-    const expenses = salaries + spend + TRAVEL
-    return { tsr, morale, pWin, spend, risk: !has && S.turn >= 2, cashWin: S.cash + revenue + PRIZE[S.rank] - expenses, cashLose: S.cash + revenue - expenses - 10000 }
+    const onceRev = S.once ? S.once.rev : 0, onceCost = S.once ? S.once.cost : 0
+    const base = sponsors + (has ? MGR_REV : 0) + S.merchPayoutNext + S.sponsorDealNext + onceRev
+    const costs = salaries + spend + TRAVEL + onceCost
+    const prize = PRIZE[S.rank]
+    const share = Math.round(prize * (S.prizeShare + S.onceShare))
+    return { pWin, spend, cashWin: S.cash + base + incomeFor(fansNow, true) + prize - costs - share, cashLose: S.cash + base + incomeFor(fansNow, false) - costs - 10000 }
   }
 
   function updatePlan(){
@@ -675,16 +871,15 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     plan.innerHTML =
       `<span class="chip ok">3 of 3 chosen</span>` +
       `<span class="chip">Spend ${fmtMoney(pr.spend)}</span>` +
-      `<span class="chip">Win odds ${Math.round(pr.pWin * 100)}%</span>` +
+      `<span class="chip">Win chance ${Math.round(pr.pWin * 100)}%</span>` +
       `<span class="chip ${pr.cashWin < 0 ? 'bad' : 'ok'}">Cash if you win ${fmtMoney(pr.cashWin)}</span>` +
       `<span class="chip ${pr.cashLose < 0 ? 'bad' : ''}">Cash if you lose ${fmtMoney(pr.cashLose)}</span>` +
-      (pr.risk ? `<span class="chip warn">PR risk ${Math.round(INCIDENT_P * 100)}%: −${fmtMoney(INCIDENT_COST)} and −${Math.round(INCIDENT_FANS * 100)}% fans</span>` : '') +
-      (pr.cashLose < 0 ? `<span class="small" style="color:var(--rose);font-weight:800">⚠ A loss would put you below $0. Two negative turns in a row ends the run.</span>` : '')
+      (pr.cashLose < 0 ? `<span class="small" style="color:var(--rose);font-weight:800">⚠ If you lose, your cash goes below $0. Two quarters in a row below $0 ends the game.</span>` : '')
   }
 
   /* ---------- screens ---------- */
   function sceneSvg(){
-    return `<svg class="scene" viewBox="0 0 420 300" role="img" aria-label="Illustration of a gaming monitor showing a scoreboard, with a trophy and controller">
+    return `<svg class="scene" viewBox="0 0 420 300" aria-hidden="true" focusable="false">
       <defs><linearGradient id="gsc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d4df0"/><stop offset="1" stop-color="#22b8cf"/></linearGradient></defs>
       <rect width="420" height="300" rx="30" fill="url(#gsc)"/>
       <circle cx="350" cy="60" r="70" fill="#fff" opacity=".12"/><circle cx="60" cy="250" r="60" fill="#fff" opacity=".1"/>
@@ -705,124 +900,161 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     return `
     <section class="hero2" aria-labelledby="introh">
       <div>
-        <span class="kicker">8 turns · 2 years</span>
-        <h2 id="introh">Esports Company Management</h2>
-        <p class="lead">Last week you ran the communications desk. This week you run the club that desk works for. You’re the <strong>general manager</strong> of the Lakeshore Lynx: each quarter you make three decisions, your team plays a tournament, and the books get settled.</p>
-        <div class="note warn"><b>One rule:</b> sponsors require you to <b>hire a communications director</b> by Year 1, Quarter 3. Hire early and the desk pays for itself. Wait, and PR incidents start costing you.</div>
-        <p>Build a winning roster, keep the players happy, and finish the second year with <strong>a higher rank, a healthy profit and a bigger fanbase</strong>. Every quarter opens with the front page of <em>The League Ledger</em>, so read it: it tells you how the last turn really went.</p>
+        <span class="kicker">Chapter 13 · 8 quarters · 2 years</span>
+        <h2 id="introh">Esports Finance Basics</h2>
+        <p class="lead">You are the general manager of the Lakeshore Lynx. Every quarter starts with one money idea from Chapter 13 and a decision. Then you make three more choices and your team plays a tournament.</p>
+        <div class="note warn"><b>One rule:</b> hire a sponsorship manager by Quarter 3. Sponsors only sign deals with clubs that have one, and the hire adds to your fixed costs.</div>
+        <p><strong>Your goal:</strong> finish the second year with cash above $0, a higher rank, and more fans.</p>
+        <p class="small muted">Play on your own or with a partner and talk through each decision. “Reading options” at the top lets you change text size and spacing.</p>
         <div class="go">
           <label for="orgName">Club name (leave blank for the Lakeshore Lynx)</label>
           <input id="orgName" type="text" placeholder="${DEFAULT_ORG}" autocomplete="off" maxlength="32" value="${esc(S.org || '')}">
-          <label for="studentName">Your name, for the final report</label>
-          <input id="studentName" type="text" placeholder="Manager X" autocomplete="off" maxlength="40" value="${esc(S.name || '')}">
+          <label for="studentName">Your name</label>
+          <input id="studentName" type="text" placeholder="Manager X" autocomplete="name" maxlength="40" value="${esc(S.name || '')}">
           <p style="margin-top:14px"><button class="btn primary big" id="btnStartGame" type="button">Start the first quarter →</button></p>
-          <p class="small muted">About 20–30 minutes · saved in this browser</p>
+          <p class="small muted">About 35 to 45 minutes · saved in this browser</p>
         </div>
       </div>
-      <div aria-hidden="false">${sceneSvg()}</div>
+      <div aria-hidden="true">${sceneSvg()}</div>
     </section>
 
     <div class="tiles">
-      <div class="tile t1"><span class="ti" aria-hidden="true">🧭</span><strong>Read, then decide</strong><span>Each quarter opens with a newspaper story about the last one. Then you pick one option each from Operations, Marketing and Player Focus.</span></div>
-      <div class="tile t2"><span class="ti" aria-hidden="true">🏟️</span><strong>Play a tournament</strong><span>Win odds come from your TSR and morale. A win earns prize money and fans. A loss costs both.</span></div>
-      <div class="tile t3"><span class="ti" aria-hidden="true">⚖️</span><strong>Staff the desk</strong><span>Hire a communications director by Q3. It costs payroll, but it adds fans, sponsor money and protection from PR incidents.</span></div>
-      <div class="tile t4"><span class="ti" aria-hidden="true">📈</span><strong>Score your org</strong><span>Final score is 40% rank, 40% profit and 20% fans. You can also win by mastering just one.</span></div>
+      <div class="tile t1"><span class="ti" aria-hidden="true">📰</span><strong>Read the news</strong><span>A short story about last quarter.</span></div>
+      <div class="tile t2"><span class="ti" aria-hidden="true">🧠</span><strong>Learn one money idea</strong><span>A Chapter 13 idea and a decision each quarter.</span></div>
+      <div class="tile t3"><span class="ti" aria-hidden="true">🧭</span><strong>Make 3 choices</strong><span>Pick one option in each of three columns.</span></div>
+      <div class="tile t4"><span class="ti" aria-hidden="true">💰</span><strong>Watch your cash</strong><span>Earn what you spend. Stay above $0.</span></div>
     </div>
 
     <section class="card career-card" aria-labelledby="tiersh">
-      <h3 id="tiersh">Climb the tiers</h3>
-      <p class="muted">Rank depends on your TSR and your fanbase. Higher tiers pay bigger prizes and bigger sponsorships.</p>
+      <h3 id="tiersh">Three phases</h3>
       <ol class="career-path">
-        <li><span class="career-num">3</span><strong>Rookie</strong><span class="small">You start here. $20K prize for a tournament win.</span></li>
-        <li><span class="career-num">2</span><strong>Challenger</strong><span class="small">TSR 70+ and 7,000 fans. $35K prize.</span></li>
-        <li><span class="career-num">1</span><strong>Elite</strong><span class="small">TSR 80+ and 12,000 fans. $60K prize.</span></li>
+        <li><span class="career-num">1</span><strong>Learn the basics</strong><span class="small">Quarters 1–2. Keep cash above $150,000.</span></li>
+        <li><span class="career-num">2</span><strong>Grow the club</strong><span class="small">Quarters 3–6. Reach Tier 2 (Challenger).</span></li>
+        <li><span class="career-num">3</span><strong>The finals push</strong><span class="small">Quarters 7–8. Finish with positive cash and the best tier you can.</span></li>
       </ol>
     </section>
 
-    <div class="two">
-      <section class="card" aria-labelledby="startsh">
-        <h3 id="startsh">Where you start</h3>
-        <div class="kv"><span>Cash</span><b>$250,000</b></div>
-        <div class="kv"><span>Salaries</span><b>$30,000 / turn</b></div>
-        <div class="kv"><span>TSR</span><b>60</b></div>
-        <div class="kv"><span>Morale</span><b>70</b></div>
-        <div class="kv"><span>Fans</span><b>5,000</b></div>
-        <div class="kv"><span>Rank</span><b>Tier 3 (Rookie)</b></div>
-        <div class="kv"><span>Comms director</span><b>Not hired (due by Q3)</b></div>
-        <p class="small muted" style="margin-top:10px">Open <b>Words to know</b> in the top bar any time you need a definition.</p>
-      </section>
       <section class="card" aria-labelledby="winsh">
-        <h3 id="winsh">Ways to win</h3>
-        <p class="small"><b>Score 40+ and survive</b> to pass. 50+ is moderate success, 60+ is solid, 70+ is strong.</p>
-        <p class="small"><b>Total Domination:</b> Elite rank, 15K fans and $50K profit.</p>
-        <p class="small"><b>Exceptional (A+):</b> make $100K+ profit, or reach 20K+ fans at Tier 2 or better, or hold Tier 1 with TSR 85+.</p>
-        <p class="small muted">You don’t need to excel at everything. Pick a strategy and commit to it.</p>
-      </section>
-    </div>`
+        <h3 id="winsh">How to pass</h3>
+        <p class="small"><b>Finish with $0 or more in cash</b> and a score of 40 or higher. Ending below $0 is an automatic F.</p>
+        <p class="small">Your score is 40% rank, 40% profit and 20% fans. Higher grades come from a higher tier, more cash and more fans.</p>
+      </section>`
+  }
+
+  function momentCardHtml(mo){
+    const hp = mo.help
+    const helpHtml = hp ? `<details class="help"><summary>Need help?</summary>
+      <div class="row"><b>Key words:</b> ${hp.words.map(w => `<span><b>${esc(w[0])}</b> means ${esc(w[1].charAt(0).toLowerCase() + w[1].slice(1))}</span>`).join(' ')}</div>
+      <div class="row"><b>In the real world:</b> ${esc(hp.real)}</div>
+      <div class="row"><b>Talk it over:</b> ${esc(hp.talk)}</div>
+    </details>` : ''
+    return `
+    <section class="card moment" aria-labelledby="momh">
+      <span class="kicker">Chapter 13 · ${esc(mo.topic)}</span>
+      <h3 id="momh">${esc(mo.title)}</h3>
+      ${listenBtn('moment')}
+      <p>${esc(mo.concept)}</p>
+      ${helpHtml}
+      <fieldset class="mopts"><legend class="sr">Pick one decision</legend>
+        ${mo.opts.map((o, i) => `
+        <label class="opt">
+          <input type="radio" name="moment" value="${i}">
+          <span class="rd" aria-hidden="true"></span>
+          <span class="nm">${esc(o.name)}</span>
+          <span class="chs">${effectChips(o.eff)}</span>
+          <span class="fl">${esc(o.blurb)}</span>
+        </label>`).join('')}
+      </fieldset>
+      <button class="btn primary" id="btnLock" type="button" aria-describedby="lockhint" disabled>Lock in this decision</button>
+      <span class="sr" id="lockhint">Pick one option first.</span>
+    </section>
+    <div class="note info">Lock in your decision to unlock your three choices.</div>`
+  }
+
+  function momentDoneHtml(mo, i){
+    const o = mo.opts[i]
+    return `
+    <section class="card moment done" aria-labelledby="momh">
+      <span class="kicker">Chapter 13 · ${esc(mo.topic)} · decided</span>
+      <h3 id="momh">${esc(mo.title)}</h3>
+      <p>You chose <b>${esc(o.name)}</b>. ${esc(o.recap)}</p>
+    </section>`
   }
 
   function decisionScreen(){
     const yr = Math.floor((S.turn - 1) / 4) + 1
     const qtr = ((S.turn - 1) % 4) + 1
     const paper = S.paper || (S.turn === 1 ? launchPaper() : statusPaper())
+    const mo = MOMENTS[S.turn - 1]
+    const pickedIdx = S.moments[S.turn]
+    const gated = !!mo && pickedIdx === undefined
+    const ph = phaseInfo()
     const incoming = S.merchPayoutNext + S.sponsorDealNext
-    const tipHtml = (incoming > 0 ? `<div class="note ok">Incoming this turn: ${fmtMoney(incoming)} from an earlier merchandise or sponsor deal.</div>` : '') +
-      `<p class="muted">Pick one call in each column, then check the projected cash at the bottom before you run the quarter.</p>`
+    const tipHtml = incoming > 0 ? `<div class="note ok">Money coming in this quarter from an earlier deal: ${fmtMoney(incoming)}.</div>` : ''
 
     const bannerBg = S.cash < 0 || S.morale < 30 ? '#ffe3e9' : '#eceeff'
-    const c1 = S.rank === 1 ? '#b45309' : S.rank === 2 ? '#0f766e' : '#4338ca'
-    const c2 = S.rank === 1 ? '#f59e0b' : S.rank === 2 ? '#22b8cf' : '#3b82f6'
+    const c1 = S.rank === 1 ? '#92400e' : S.rank === 2 ? '#0f766e' : '#4338ca'
+    const c2 = S.rank === 1 ? '#b45309' : S.rank === 2 ? '#0e7490' : '#1d4ed8'
+
+    const form = `
+    <form id="choices" aria-label="Choices for this quarter" onsubmit="return false">
+      <div class="cats">
+        ${CATS.map(c => `
+        <fieldset class="cat ${c.key}">
+          <legend><span class="ch"><span class="ci" aria-hidden="true">${c.icon}</span><span><b>${c.title}</b><span>${c.sub}</span></span></span></legend>
+          <div class="list">${c.key === 'ops' && S.currentChoices.ops.length === 1 ? '<div class="note warn small"><b>Required hire.</b> Sponsors will not allow other operations spending until you hire a sponsorship manager.</div>' : ''}${optionsHtml(c)}</div>
+        </fieldset>`).join('')}
+      </div>
+      <div class="confirm">
+        <div class="plan" id="plan" role="status" aria-live="polite" aria-atomic="true"></div>
+        <button class="btn primary big" id="btnConfirm" type="button" aria-describedby="plan" disabled>Confirm choices &amp; play the quarter →</button>
+      </div>
+    </form>`
 
     return `
     ${paperHtml(paper, true)}
     <section class="banner" style="--bt:${bannerBg}" aria-labelledby="turnh">
       <div class="story">
         <span class="kicker">Year ${yr} · Quarter ${qtr}</span>
-        <h2 id="turnh">Turn ${S.turn} of ${S.turnsTotal}: make three calls</h2>
+        <div class="phase"><span class="chip new">Phase ${ph.n} of 3 · ${ph.name}</span><span class="chip ${ph.ok ? 'ok' : 'warn'}">${ph.ok ? ph.yes : ph.no}</span></div>
+        <h2 id="turnh">Quarter ${S.turn} of ${S.turnsTotal}: ${gated ? 'start with a Chapter 13 decision' : 'make three choices'}</h2>
+        <p class="small"><b>Phase goal:</b> ${ph.goal}</p>
         ${tipHtml}
       </div>
-      <div class="bart" style="--c1:${c1};--c2:${c2}" role="group" aria-label="This turn at a glance">
+      <div class="bart" style="--c1:${c1};--c2:${c2}" role="group" aria-label="This quarter at a glance">
         <div class="big">${S.turn}/${S.turnsTotal}</div>
         <div class="lab">${rankName(S.rank)}</div>
         <div class="row"><div><b>${short(PRIZE[S.rank])}</b><span class="lab">prize if you win</span></div><div><b>${S.fans.toLocaleString()}</b><span class="lab">fans</span></div></div>
       </div>
     </section>
-
-    <form id="choices" aria-label="Decisions for this turn" onsubmit="return false">
-      <div class="cats">
-        ${CATS.map(c => `
-        <fieldset class="cat ${c.key}">
-          <legend><span class="ch"><span class="ci" aria-hidden="true">${c.icon}</span><span><b>${c.title}</b><span>${c.sub}</span></span></span></legend>
-          <div class="list">${c.key === 'ops' && S.currentChoices.ops.length === 1 ? '<div class="note warn small"><b>Required hire.</b> Sponsors have frozen other operations spending until the communications desk is staffed.</div>' : ''}${optionsHtml(c)}</div>
-        </fieldset>`).join('')}
-      </div>
-      <div class="confirm">
-        <div class="plan" id="plan"></div>
-        <button class="btn primary big" id="btnConfirm" type="button" disabled>Confirm decisions &amp; run turn →</button>
-      </div>
-    </form>`
+    ${gated ? momentCardHtml(mo) : (mo ? momentDoneHtml(mo, pickedIdx) : '')}
+    ${gated ? '' : form}`
   }
 
   /* ---------- the newspaper ---------- */
   function paperHtml(p, withJump){
     const paras = p.paras.map((t, i) => `<p${i === 0 ? ' class="drop"' : ''}>${esc(t)}</p>`)
-    if (p.pull) paras.splice(p.paras.length >= 4 ? 3 : Math.min(2, paras.length), 0, `<blockquote class="pull">“${esc(p.pull.text)}”<cite>${esc(p.pull.who)}</cite></blockquote>`)
     const nums = (p.numbers || []).map(n => `<div class="kv"><span>${esc(n[0])}</span><b>${esc(n[1])}</b></div>`).join('')
     const nx = p.next
+    const bars = p.bars ? (() => {
+      const m = Math.max(p.bars.inn, p.bars.out, 1)
+      return `<div class="mbar" aria-hidden="true"><div class="lb"><span>Money in</span><span>${fmtMoney(p.bars.inn)}</span></div><div class="tr"><i class="in" style="width:${Math.round(p.bars.inn / m * 100)}%"></i></div><div class="lb"><span>Money out</span><span>${fmtMoney(p.bars.out)}</span></div><div class="tr"><i class="out" style="width:${Math.round(p.bars.out / m * 100)}%"></i></div></div>`
+    })() : ''
     return `
     <article class="paper" id="paper" tabindex="-1" aria-labelledby="paperh">
-      <div class="pmast"><div class="pname">${LEAGUE}</div><div class="ptag">Esports news for the people who run the clubs</div></div>
-      <div class="pline"><span>${esc(p.edition)}</span><span>${esc(p.dateline || '')}</span></div>
+      <div class="pmast"><div class="pname">${LEAGUE}</div></div>
+      <div class="pline"><span>${esc(p.edition)}</span></div>
       <div class="phead">
         <span class="kicker">${esc(p.kicker)}</span>
         <h2 id="paperh">${esc(p.headline)}</h2>
         <p class="deck">${esc(p.deck)}</p>
-        <p class="by">By ${CAST.reporter}, Esports Desk${withJump ? ' <a class="pjump" href="#choices">Jump to your decisions ↓</a>' : ''}</p>
+        <p class="by">By ${CAST.reporter}, Esports Desk</p>
+        ${listenBtn('paper')}
       </div>
       <div class="pbody">
         <div class="cols">${paras.join('')}</div>
         <aside class="pside" aria-label="Sidebars">
-          ${nums ? `<div class="pbox"><h3>${esc(p.numbersTitle || 'By the numbers')}</h3>${nums}</div>` : ''}
+          ${nums ? `<div class="pbox"><h3>${esc(p.numbersTitle || 'The numbers')}</h3>${bars}${nums}</div>` : ''}
           ${nx ? `<div class="pbox next"><h3>${esc(nx.title)}</h3>${nx.lines.map(l => `<p>${esc(l)}</p>`).join('')}${nx.tip ? `<p class="tip">💡 ${esc(nx.tip)}</p>` : ''}</div>` : ''}
         </aside>
       </div>
@@ -830,20 +1062,16 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
   }
 
   function advice(net){
-    const runway = net < 0 ? S.cash / -net : Infinity
-    const need = NEED[S.rank]
-    if (S.cash < 0) return 'Cash is below zero. Choose free or cheap options in at least two columns and avoid anything that raises payroll.'
-    if (!(S.comms && S.comms.hired)){
-      return S.turn >= COMMS_DEADLINE
-        ? 'Sponsors require a communications director this quarter. Hiring is your only Operations choice.'
-        : `Sponsors want a communications director by Year 1, Quarter ${COMMS_DEADLINE}. Hire early and the desk pays for itself, or risk a PR incident (${Math.round(INCIDENT_P * 100)}% chance each turn).`
+    const quartersLeft = net < 0 ? S.cash / -net : Infinity
+    if (S.cash < 0) return 'Your cash is below $0. Pick free or cheap options this quarter.'
+    if (!mgrHired()){
+      return S.turn >= MGR_DEADLINE
+        ? 'Sponsors require a sponsorship manager this quarter. It is your only Operations choice.'
+        : `Sponsors only sign deals with clubs that have a sponsorship manager. Hire one by Quarter ${MGR_DEADLINE}.`
     }
-    if (runway < 0.5) return 'At the current loss rate the next quarter would push you below zero. Choose free or very cheap options and skip anything that raises payroll.'
-    if (runway < 3) return `Cash covers about ${runway.toFixed(1)} more quarters at the current loss rate. Favor free or low-cost calls, and remember that hires raise payroll for good.`
-    if (S.morale < 45) return 'Morale multiplies your win odds. A rest, bonding or recovery option would pay off more than another grind.'
-    if (need && S.tsr >= need.tsr - 8 && S.fans >= need.fans * 0.7) return `${need.next} is within reach. It needs TSR ${need.tsr}+ (you have ${S.tsr}) and ${need.fans.toLocaleString()}+ fans (you have ${S.fans.toLocaleString()}).`
-    if (S.salaries >= 45000) return `Payroll is ${fmtMoney(S.salaries)} a quarter. Any new hire has to earn that back every turn.`
-    return 'Check the “cash if you lose” figure on the confirm bar. Strong clubs survive their bad quarters.'
+    if (quartersLeft < 3) return `At this rate your cash lasts about ${Math.max(0, quartersLeft).toFixed(1)} more quarters. Try cheaper options.`
+    if (S.morale < 45) return 'Low morale lowers your chance to win. Pick a rest or team-building option.'
+    return 'Check “cash if you lose” before you confirm.'
   }
 
   function nextBox(net){
@@ -851,10 +1079,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     const nx = turnInfo(S.turn)
     return {
       title: `Next up: ${nx.name}`,
-      lines: [
-        `${nx.season}, Year ${nx.year}. Opponent: ${nx.opp}${nx.opp === RIVAL ? ', the rival' : ''}.`,
-        `A win pays ${fmtMoney(PRIZE[S.rank])}. On current form your odds are ${Math.round(winProbability() * 100)}%.`
-      ],
+      lines: [`${nx.season}, Year ${nx.year}, vs ${nx.opp}. A win pays ${fmtMoney(PRIZE[S.rank])}.`],
       tip: advice(net)
     }
   }
@@ -868,212 +1093,125 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     const org = orgName(), name = displayName(), t = turnInfo(1)
     return {
       edition: 'Opening edition · Year 1, Quarter 1',
-      dateline: 'New season, new front office',
-      kicker: 'Front page · New general manager',
-      headline: `${org.toUpperCase()} HAVE AN AUDIENCE. NOW THEY NEED A FRONT OFFICE.`,
-      deck: `New general manager ${name} takes over a club with a growing public voice, $250,000, a $30,000 payroll and eight quarters to build something that lasts.`,
+      dateline: 'New season, new budget',
+      kicker: 'Front page · The money',
+      headline: `${org.toUpperCase()} HAVE FANS. NOW THEY NEED A PLAN FOR THE MONEY.`,
+      deck: `New general manager ${name} starts with $250,000 in cash and eight quarters to make it last.`,
       paras: [
-        `Last season the communications desk gave ${org} something money cannot easily buy: an audience. Posts, press releases and replies to sponsors and fans grew the community to 5,000 fans. What the club still lacks is anyone to run that desk full time, and a budget to match its ambitions.`,
-        `The job now falls to ${name}, the club’s general manager, who must make three calls every quarter: what to build, how to market the club and how hard to push the players. Each call costs money, and some raise payroll for good. The first tournament, the ${t.name} against ${t.opp}, is already on the calendar.`,
-        `Sponsors set one condition in their first meeting: ${org} must hire a communications director by Year 1, Quarter ${COMMS_DEADLINE}. Until the desk is staffed, any slip in public lands on management, and the league’s rumor mill does not wait.`,
-        `Promotion is the prize. A club needs a team rating of 70 and 7,000 fans to reach Challenger, and 80 and 12,000 to reach Elite. Prize money grows with each step, from $20,000 to $35,000 to $60,000 for a tournament win.`
+        `Every quarter the club pays $30,000 in salaries. That is a fixed cost: it stays the same whether the team wins or loses. Travel adds about $5,000, and sponsors pay about $10,200.`,
+        `Even a $20,000 tournament win does not cover everything, so every choice matters. To break even, ${org} has to earn at least as much as it spends.`
       ],
-      pull: { text: 'We have the talent and the audience. What we do not have is a budget, so every dollar has to work.', who: `${CAST.coach}, head coach` },
-      numbersTitle: 'Starting lineup',
-      numbers: [['Cash', '$250,000'], ['Payroll', '$30,000 / turn'], ['Team skill (TSR)', '60'], ['Morale', '70'], ['Fans', '5,000'], ['Rank', 'Tier 3 (Rookie)'], ['Comms director', `Hire by Q${COMMS_DEADLINE}`]],
+      numbersTitle: 'Starting numbers',
+      numbers: [['Cash', '$250,000'], ['Fixed costs (salaries)', '$30,000 a quarter'], ['Travel', '$5,000 a quarter'], ['Sponsor money', 'about $10,200 a quarter'], ['Sponsorship manager', `Hire by Quarter ${MGR_DEADLINE}`]],
       next: {
         title: `First up: ${t.name}`,
-        lines: [`${t.season}, Year ${t.year}. Opponent: ${t.opp}.`, `A win at Tier 3 pays $20,000. Your starting odds are ${Math.round(winProbability() * 100)}%.`],
-        tip: `The communications director is in your Operations options. Hiring costs payroll, but the desk adds fans and sponsor money every quarter and stops PR fires.`
+        lines: [`${t.season}, Year ${t.year}, vs ${t.opp}. A win pays $20,000.`],
+        tip: 'Read the Chapter 13 decision first.'
       }
     }
   }
 
   function statusPaper(){
     const org = orgName()
-    const wins = S.history.filter(h => h.win).length, losses = S.history.length - wins
     const net = S.history.length ? S.history[S.history.length - 1].net : 0
     return {
       edition: editionLabel(), dateline: 'Mid-season report', kicker: 'Front page · Standings',
-      headline: `${org.toUpperCase()} PRESS ON INTO QUARTER ${S.turn}`,
-      deck: `The club sits in ${rankName(S.rank)} with ${S.fans.toLocaleString()} fans and ${fmtMoney(S.cash)} in the bank.`,
+      headline: `${org.toUpperCase()} CONTINUE INTO QUARTER ${S.turn}`,
+      deck: `The club is in ${rankName(S.rank)} with ${S.fans.toLocaleString()} fans and ${fmtMoney(S.cash)} in cash.`,
       paras: [
-        `${org} have played ${S.history.length} of ${S.turnsTotal} quarters${S.history.length ? `, with a tournament record of ${wins}-${losses}` : ''}. Team skill stands at ${S.tsr} and morale at ${S.morale}.`,
-        `Payroll is ${fmtMoney(S.salaries)} a quarter. The communications desk is ${S.comms && S.comms.hired ? 'staffed' : 'still empty'}. The next tournament is the ${turnInfo(S.turn).name} against ${turnInfo(S.turn).opp}.`
+        `${org} have played ${S.history.length} of ${S.turnsTotal} quarters. Fixed costs are ${fmtMoney(S.salaries)} a quarter, and the sponsorship manager is ${mgrHired() ? 'hired' : 'not hired yet'}.`
       ],
-      numbers: [['Cash', fmtMoney(S.cash)], ['TSR', String(S.tsr)], ['Morale', String(S.morale)], ['Fans', S.fans.toLocaleString()], ['Rank', rankName(S.rank)]],
+      numbersTitle: 'The numbers',
+      numbers: [['Cash', fmtMoney(S.cash)], ['TSR', String(S.tsr)], ['Morale', String(S.morale)], ['Fans', S.fans.toLocaleString()]],
       next: nextBox(net)
     }
   }
 
   function turnPaper(c){
-    const org = orgName(), T = c.info
-    const O = org.toUpperCase(), OP = T.opp.toUpperCase(), TN = T.name.toUpperCase()
-    const pct = Math.round(c.pWin * 100)
-    const band = pct >= 70 ? 'fav' : pct >= 45 ? 'even' : 'dog'
-    const promoted = /^Promoted/.test(c.rankChange || ''), demoted = /^Demoted/.test(c.rankChange || '')
-    const lowMorale = c.newMorale < 40, broke = c.cash < 0
-    const rivalMeet = T.opp === RIVAL
-    const prev = S.history.filter(h => h.opp === T.opp && h.turn < c.turn).pop()
-    const tier = tierShort(S.rank).toUpperCase()
-    const ms = (c.fanMilestone || '').split('!')[0]
+    const org = orgName(), T = c.info, f = c.fin, k = c.calls
+    const O = org.toUpperCase()
+    const addSal = (k.ops.salaries || 0) + (k.mkt.salaries || 0)
+    const promoted = /^Promoted/.test(c.rankChange || '')
+    const absNet = fmtMoney(Math.abs(c.net))
 
     let headline, deck
-    if (c.win && promoted){
-      headline = pk([`${O} STORM INTO THE ${tier} TIER`, `${O} EARN PROMOTION TO ${tier}`])
-      deck = `The win over ${T.opp} at the ${T.name} was the last piece. The club now plays as ${rankName(S.rank)}.`
-    } else if (c.incident){
-      headline = c.incident.head
-      deck = `${c.incident.deck} The club ${c.win ? 'beat' : 'lost to'} ${T.opp}, but that is not the story.`
-    } else if (c.win && broke){
-      headline = `${O} WIN ON STAGE, BLEED IN THE BOOKS`
-      deck = `Victory over ${T.opp} cannot hide a treasury that has dipped below zero.`
-    } else if (c.win && lowMorale){
-      headline = pk([`${O} WIN, BUT AT WHAT COST?`, `${O} TAKE THE ${TN} WITH A TIRED ROSTER`])
-      deck = 'The trophy is real. So are the whispers about a burned-out locker room.'
-    } else if (c.win && prev && !prev.win && rivalMeet){
-      headline = `${O} AVENGE EARLIER LOSS TO ${OP}`
-      deck = `A rematch at the ${T.name} settled the score.`
-    } else if (c.win && ms){
-      headline = `${O} ARE THE TALK OF THE LEAGUE`
-      deck = `The ${ms} arrives on the back of a ${T.name} victory.`
-    } else if (c.win){
-      headline = pk([`${O} TAKE THE ${TN}`, `${O} OUTLAST ${OP} IN THE ${TN}`, `${O} DISPATCH ${OP} AT THE ${TN}`])
-      deck = band === 'dog' ? `Underdogs by the numbers, ${org} wrote their own ending.` : band === 'fav' ? `Favorites by the numbers, ${org} delivered on schedule.` : `A coin-flip series fell ${org}’s way.`
-    } else if (demoted){
-      headline = `${O} SLIDE BACK TO THE ROOKIE RANKS`
-      deck = `A loss to ${T.opp} and a thinning fanbase cost the club its tier.`
-    } else if (broke){
-      headline = `${O} OUT OF LUCK AND NEARLY OUT OF MONEY`
-      deck = `${T.opp} win the ${T.name}, and the club’s cash reserves are now below zero.`
-    } else if (lowMorale){
-      headline = `LOCKER ROOM IN TURMOIL AFTER ${OP} DEFEAT`
-      deck = `Morale has fallen to ${c.newMorale}, and players are starting to talk.`
+    if (c.cash < 0){
+      headline = `${O} ARE OUT OF CASH: ${fmtMoney(c.cash)}`
+      deck = 'If cash stays below $0 for another quarter, the club shuts down.'
+    } else if (addSal > 0){
+      headline = `${O} ADD ${fmtMoney(addSal)} TO THEIR FIXED COSTS`
+      deck = 'A new salary has to be paid every quarter from now on.'
+    } else if (promoted){
+      headline = `${O} MOVE UP TO ${tierShort(S.rank).toUpperCase()}`
+      deck = `A tournament win now pays ${fmtMoney(PRIZE[S.rank])}.`
+    } else if (c.net < 0){
+      headline = `${O} LOSE ${absNet} THIS QUARTER`
+      deck = `They earned ${fmtMoney(f.revenue)} but needed ${fmtMoney(f.breakeven)} to break even.`
     } else {
-      headline = pk([`${OP} STUN ${O} AT THE ${TN}`, `UPSET ALERT: ${OP} TOP ${O}`, `${O} FALL SHORT AGAINST ${OP}`])
-      deck = band === 'fav' ? `The numbers had ${org} at ${pct}%. The scoreboard disagreed.` : `A tough result, but the work behind the scenes goes on.`
+      headline = `${O} MAKE ${absNet} THIS QUARTER`
+      deck = `They earned ${fmtMoney(f.revenue)} and needed ${fmtMoney(f.breakeven)} to break even.`
     }
 
-    // 1. the match
-    const match = c.win
-      ? { fav: `${org} did what favorites are supposed to do, beating ${T.opp} at the ${T.name}. The models gave them ${pct}% and the scoreboard agreed.`,
-          even: `${org} edged ${T.opp} at the ${T.name} in a close series that the models rated at ${pct}%.`,
-          dog: `Few saw it coming. The models gave ${org} only ${pct}% against ${T.opp} at the ${T.name}, and they won anyway.` }[band]
-      : { fav: `It was not supposed to go this way. ${org} entered the ${T.name} as ${pct}% favorites against ${T.opp} and left with nothing.`,
-          even: `${T.opp} took a tight series from ${org} at the ${T.name}, a matchup the models put at ${pct}% for the home side.`,
-          dog: `${org} knew the odds were ${pct}%, and ${T.opp} proved the models right at the ${T.name}.` }[band]
-    let p1 = match + ' ' + (c.win ? `The win paid ${fmtMoney(c.prize)} and added 1,500 fans.` : `The loss cost a $10,000 sponsor penalty and shaved 5% off the fanbase.`)
-    if (rivalMeet){
-      p1 += prev ? ` The earlier meeting with the ${RIVAL} went to ${prev.win ? org : 'the Wolves'}.` : ` The ${RIVAL}, the league’s best-funded club, have announced themselves as the team to beat.`
-    }
+    const deckHasMoney = !(c.cash < 0) && !(addSal > 0) && !promoted
+    let p1 = `${deckHasMoney ? '' : `This quarter ${org} earned ${fmtMoney(f.revenue)} and spent ${fmtMoney(f.breakeven)}. `}Fixed costs were ${fmtMoney(f.fixed)} and variable costs were ${fmtMoney(f.variable)}. Cash ${c.net >= 0 ? 'went up' : 'went down'} by ${absNet} to ${fmtMoney(c.cash)}.`
+    if (f.share > 0) p1 += ` Players took ${fmtMoney(f.share)} of the prize money.`
 
-    // 2. the books
-    const k = c.calls
-    let p2 = `Off stage, the front office made three calls: “${k.ops.name}” on operations, “${k.mkt.name}” in marketing and “${k.ply.name}” for the roster. The quarter closed with ${fmtMoney(c.revenue)} in revenue against ${fmtMoney(c.expenses)} in costs, a net ${c.net >= 0 ? 'gain' : 'loss'} of ${fmtMoney(Math.abs(c.net))}. Cash reserves now stand at ${fmtMoney(c.cash)}.`
-    const addSal = (k.ops.salaries || 0) + (k.mkt.salaries || 0)
-    if (addSal) p2 += ` The new hire adds ${fmtMoney(addSal)} to every future payroll.`
-    if (c.cash < 0) p2 += ' With cash below zero, a second negative quarter would end the club.'
-    else if (c.net < 0) p2 += c.cash / -c.net < 0.5 ? ' At that pace the club cannot cover another quarter.' : ` At that pace the club has about ${(c.cash / -c.net).toFixed(1)} quarters of cash left.`
-    else p2 += ' The club ended the quarter ahead.'
-
-    // 2b. the comms desk
-    const hiredNow = c.hiring, has = c.hasComms
-    let pc
-    if (hiredNow){
-      pc = `The quarter’s biggest hire was ${CAST.comms} as communications director, as the sponsors had asked. The desk now adds ${COMMS_FANS} fans and ${fmtMoney(COMMS_REV)} in sponsor relations every quarter and shields the club from PR incidents.`
-    } else if (has){
-      pc = `Communications director ${CAST.comms} kept the club out of the headlines for the wrong reasons this quarter.`
-    } else if (c.incident){
-      pc = `${c.incident.body} The mess cost ${fmtMoney(INCIDENT_COST)} and ${Math.round(INCIDENT_FANS * 100)}% of the fanbase, and the communications desk is still empty.`
-    } else if (c.turn >= 2){
-      pc = 'The club got lucky this quarter, with no PR fires. But the communications desk is still empty, and luck is not a plan.'
-    } else {
-      pc = `The communications desk is still empty. Sponsors want a director in place by Year 1, Quarter ${COMMS_DEADLINE}.`
-    }
-    if (!has && S.turn >= COMMS_DEADLINE) pc += ' Sponsors have now made the hire mandatory.'
-    if (k.mkt.chan) pc += ` The ${k.mkt.chan} campaign ${has ? `was amplified by the desk, adding ${Math.round((CHANNEL_BOOST - 1) * 100)}% more fans` : 'ran with no director to steer it'}.`
-
-    // 3. the room
-    const tsrD = c.newTSR - c.oldTSR, morD = c.newMorale - c.oldMorale
-    const tsrTxt = tsrD === 0 ? `Team skill held steady at ${c.newTSR}` : `Team skill ${tsrD > 0 ? 'climbed' : 'slipped'} by ${Math.abs(tsrD)} to ${c.newTSR}`
-    const morTxt = morD === 0 ? `morale held at ${c.newMorale}` : `morale ${morD > 0 ? 'rose' : 'fell'} by ${Math.abs(morD)} to ${c.newMorale}`
-    const p3 = `${tsrTxt} in scrim data, while ${morTxt}.`
-    let quote, who
-    if (c.newMorale >= 70){ quote = pk(['The mood in the house is the best it has been.', 'Everyone is locked in. We trust each other right now.']); who = `${CAST.captain}, captain` }
-    else if (c.newMorale >= 45){ quote = pk(['We are fine, just tired. A good week would help.', 'Nobody is complaining yet, but we feel the schedule.']); who = `${CAST.captain}, captain` }
-    else { quote = pk(['Honestly, we are running on fumes. Somebody is going to walk if this keeps up.', 'Players are checking out. I need rest days, not another bootcamp.']); who = `${CAST.coach}, head coach` }
-
-    if (has && Math.random() < 0.5){ quote = pk(['Every post has an owner now. That is why the audience trusts us.', 'We verify first and post second. It is slower for ten minutes and safer for the whole year.']); who = `${CAST.comms}, communications director` }
-
-    // 4. the fans and the ladder
-    const fd = c.newFans - c.oldFans
-    let p4 = `${fd >= 0 ? 'The fanbase grew by' : 'The fanbase shrank by'} ${Math.abs(fd).toLocaleString()} to ${c.newFans.toLocaleString()}.`
-    if (c.fanMilestone) p4 += ` ${c.fanMilestone}`
-    if (promoted) p4 += ` ${c.rankChange} Prize money and sponsor deals scale with the new tier.`
-    else if (demoted) p4 += ` ${c.rankChange}. Prize money drops with the tier.`
-    else if (NEED[S.rank]) p4 += ` ${NEED[S.rank].next} status needs TSR ${NEED[S.rank].tsr}+ and ${NEED[S.rank].fans.toLocaleString()}+ fans. The club has ${c.newTSR} and ${c.newFans.toLocaleString()}.`
+    let p2 = c.win
+      ? `${org} beat ${T.opp} at the ${T.name} and won ${fmtMoney(c.prize)} plus 1,500 fans.`
+      : `${T.opp} beat ${org} at the ${T.name}. The loss cost a $10,000 penalty and 5% of the fans.`
+    if (c.recap) p2 += ` ${c.recap}`
+    if (c.hiring) p2 += ` The new sponsorship manager adds $6,000 to fixed costs and brings in ${fmtMoney(MGR_REV)} every quarter.`
+    else if (addSal) p2 += ` The new hire costs ${fmtMoney(addSal)} every quarter.`
+    if (c.rankChange) p2 += ` ${c.rankChange}${/[.!]$/.test(c.rankChange) ? '' : '.'}`
 
     return {
       edition: editionLabel(),
       dateline: `Reporting on ${T.season}, Year ${T.year}`,
-      kicker: `Match report · ${T.name}`,
+      kicker: `Money report · ${T.name}`,
       headline, deck,
-      paras: [p1, p2, pc, `${p3} ${p4}`],
-      pull: { text: quote, who },
-      numbersTitle: 'By the numbers',
+      paras: [p1, p2],
+      bars: { inn: f.revenue, out: f.breakeven },
+      numbersTitle: 'Last quarter’s money',
       numbers: [
-        ['Result', c.win ? 'Win' : 'Loss'],
-        ['Revenue', fmtMoney(c.revenue)],
-        ['Expenses', fmtMoney(c.expenses)],
-        ['Turn net', (c.net >= 0 ? '+' : '−') + fmtMoney(Math.abs(c.net))],
-        ['Cash', fmtMoney(c.cash)],
-        ['TSR', `${c.oldTSR} → ${c.newTSR}`],
-        ['Morale', `${c.oldMorale} → ${c.newMorale}`],
-        ['Fans', `${c.oldFans.toLocaleString()} → ${c.newFans.toLocaleString()}`],
-        ['Rank', rankName(S.rank)],
-        ['Comms desk', has ? 'Staffed' : 'Empty']
+        ['Money in', fmtMoney(f.revenue)],
+        ['Fixed costs', fmtMoney(f.fixed)],
+        ['Variable costs', fmtMoney(f.variable)],
+        ['Cash left', fmtMoney(c.cash)],
+        ['Tournament', c.win ? 'Win' : 'Loss']
       ],
       next: nextBox(c.net)
     }
   }
 
+  function totals(){
+    const h = S.history.filter(x => x.fin)
+    const sum = key => h.reduce((a, x) => a + (x.fin[key] || 0), 0)
+    return { n: h.length, inn: sum('revenue'), fixed: sum('fixed'), variable: sum('variable'), atBreakEven: h.filter(x => x.fin.profit >= 0).length }
+  }
+
   function finalPaper(F){
     const org = orgName(), O = org.toUpperCase(), a = F.a
-    const wins = S.history.filter(h => h.win).length, losses = S.history.length - wins
-    const best = S.history.reduce((m, h) => (!m || h.net > m.net) ? h : m, null)
-    const headline = {
-      'S': `${O} CROWNED: A DYNASTY IN TWO YEARS`,
-      'A+': `${O} COMPLETE A STUNNING TWO-YEAR RISE`,
-      'A': `${O} FINISH STRONG AND THE LEAGUE TAKES NOTICE`,
-      'B+': `${O} BUILD A CLUB THAT LASTS`,
-      'B': `${O} CLOSE THE BOOKS ON A SOLID DEBUT`,
-      'C': `${O} SURVIVE A DEBUT TO LEARN FROM`,
-      'D': `${O} LIMP TO THE FINISH LINE`,
-      'F': `${O} END THE SEASON IN THE RED`
-    }[a.grade]
-    const red = F.endingCash < 0
-    const lesson = F.profit > 0
-      ? 'Analysts credit disciplined spending: the club never let one-off purchases or new salaries outrun what the tournaments and sponsors brought in.'
-      : 'Analysts point to the books: payroll and one-off spending outran revenue, a reminder that contribution margin has to cover fixed costs before anything else counts.'
-    const quote = a.win
-      ? { text: 'Two years ago we had talent and no budget. Now we have both. That is the whole story.', who: `${CAST.coach}, head coach` }
-      : { text: 'We learned more from this season than any other. Next time we spend smarter.', who: `${CAST.captain}, captain` }
-    const headline2 = (red && a.win) ? `${O} HIT THEIR TARGETS BUT THE BOOKS DO NOT BALANCE` : headline
-    const deck2 = (red && a.win) ? `The club reached its goals, but it ended the season with ${fmtMoney(F.endingCash)} in the bank.` : a.desc
+    const h = S.history, n = h.length
+    const t = totals(), out = t.fixed + t.variable
+    const wins = h.filter(x => x.win).length, losses = n - wins
+    const headline = F.endingCash < 0 ? `${O} RUN OUT OF MONEY` : `${O} FINISH THE SEASON WITH ${fmtMoney(F.endingCash)}`
+    const lesson = F.endingCash < 0
+      ? 'Winning is not enough if a club spends more than it earns.'
+      : F.profit > 0
+        ? 'The club earned more than it spent, which is how it grew.'
+        : 'The club spent more than it earned, but it kept enough cash to survive.'
     return {
       edition: 'Final edition · Year 2 in review',
-      dateline: `${S.history.length} quarters on the record`,
+      dateline: `${n} quarters on the record`,
       kicker: 'Season in review',
-      headline: headline2,
-      deck: deck2,
+      headline,
+      deck: a.desc,
       paras: [
-        `Over ${S.history.length} quarters ${org} went ${wins}-${losses} on the tournament stage${best ? `. The best quarter came at the ${best.tour}, a net of ${fmtMoney(best.net)}` : ''}.`,
-        `The club finished as ${rankName(S.rank)} with ${S.fans.toLocaleString()} fans, up from 5,000, and a team rating of ${S.tsr}. ${S.comms && S.comms.hired ? `${CAST.comms} has run the communications desk since Quarter ${S.comms.turn}` : 'The communications desk was never staffed'}, and the club weathered ${S.history.filter(h => h.incident).length} public-relations incident${S.history.filter(h => h.incident).length === 1 ? '' : 's'} along the way.`,
-        `On the books, cash ended at ${fmtMoney(F.endingCash)}, a ${F.profit >= 0 ? 'profit' : 'loss'} of ${fmtMoney(Math.abs(F.profit))} on the $250,000 starting stake. ${lesson}`
+        `Over ${n} quarters the club earned ${fmtMoney(t.inn)} and spent ${fmtMoney(out)}. Cash ended at ${fmtMoney(F.endingCash)}, compared with ${fmtMoney(STARTING.cash)} at the start.`,
+        `The team went ${wins}-${losses}, finished as ${rankName(S.rank)}, and grew to ${S.fans.toLocaleString()} fans. ${lesson}`
       ],
-      pull: quote,
       numbersTitle: 'Season totals',
-      numbers: [['Score', `${F.finalScore} / 100`], ['Grade', a.grade], ['Record', `${wins}-${losses}`], ['Rank', rankName(S.rank)], ['Fans', S.fans.toLocaleString()], ['PR incidents', String(S.history.filter(h => h.incident).length)], ['Profit', (F.profit >= 0 ? '+' : '−') + fmtMoney(Math.abs(F.profit))]],
+      numbers: [['Score', `${F.finalScore} / 100`], ['Grade', a.grade], ['Money in', fmtMoney(t.inn)], ['Money out', fmtMoney(out)], ['Ending cash', fmtMoney(F.endingCash)], ['Record', `${wins}-${losses}`]],
       next: null
     }
   }
@@ -1087,29 +1225,25 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
       edition: 'Final edition · Club closed',
       dateline: `${n} quarter${n === 1 ? '' : 's'} on the record`,
       kicker: 'Breaking news',
-      headline: ruin ? `${O} FOLD AFTER ${n} QUARTER${n === 1 ? '' : 'S'}` : `PLAYERS WALK OUT ON ${O}`,
-      deck: ruin ? 'Cash stayed below zero for two quarters running, and the creditors closed in.' : 'Morale hit zero and the roster refused to play another match.',
+      headline: ruin ? `${O} SHUT DOWN AFTER ${n} QUARTER${n === 1 ? '' : 'S'}` : `PLAYERS WALK OUT ON ${O}`,
+      deck: ruin ? 'Cash stayed below $0 for two quarters in a row.' : 'Morale hit zero and the players quit.',
       paras: [
-        `${org} went ${wins}-${losses} in ${n} quarters before the end came. The club finished with ${fmtMoney(S.cash)} in cash, ${S.fans.toLocaleString()} fans and a team rating of ${S.tsr}.`,
+        `${org} went ${wins}-${losses} before the end came. The club finished with ${fmtMoney(S.cash)} in cash and ${S.fans.toLocaleString()} fans.`,
         ruin
-          ? 'The books tell the story: fixed salaries and one-off spending outran prize money and sponsors. When revenue cannot cover payroll, every extra purchase shortens the runway.'
-          : 'Grueling schedules and cuts to rest wore the players down. Morale does not just feel bad, it multiplies the team’s chance of winning, and at zero it ends the club.'
+          ? 'The club spent more than it earned for too long. Fixed costs like salaries keep coming, even in a bad quarter.'
+          : 'Hard training with no rest wore the players down. Low morale lowers your chance to win, and at zero the players quit.'
       ],
-      pull: { text: ruin ? 'We never ran out of effort. We ran out of money.' : 'You cannot grind people forever.', who: ruin ? `${CAST.captain}, captain` : `${CAST.coach}, head coach` },
-      numbersTitle: 'Final figures',
-      numbers: [['Cash', fmtMoney(S.cash)], ['TSR', String(S.tsr)], ['Morale', String(S.morale)], ['Fans', S.fans.toLocaleString()], ['Record', `${wins}-${losses}`]],
+      numbersTitle: 'Final numbers',
+      numbers: [['Cash', fmtMoney(S.cash)], ['Morale', String(S.morale)], ['Fans', S.fans.toLocaleString()], ['Record', `${wins}-${losses}`]],
       next: null
     }
   }
 
   /* ---------- game logic ---------- */
-  function academicFeedback(pl, t){
-    const { revenue, expenses, fixed, variable } = t
-    if (pl < 0 && revenue < fixed) return 'Your revenue did not reach the break-even point; fixed costs exceeded contribution margin.'
-    if (pl < 0 && variable > fixed) return 'High variable costs eroded margins this turn; tighten discretionary spending.'
-    if (pl >= 0 && revenue > expenses) return 'Positive contribution margin covered fixed costs and produced profit—well managed.'
-    if (pl < 0) return 'A net loss increased liabilities pressure; consider boosting sponsorship assets or cutting costs.'
-    return 'Stable performance with costs under control; maintain assets that drive recurring revenue.'
+  function quarterTip(profit){
+    return profit < 0
+      ? 'You spent more than you earned this quarter. Try a cheaper option or find more income.'
+      : 'You earned more than you spent. That is how a club grows its cash.'
   }
 
   function applyDecisions(opsId, mktId, plyId){
@@ -1117,6 +1251,9 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     const info = turnInfo(S.turn)
     const playedTurn = S.turn
     const oldTSR = S.tsr, oldMorale = S.morale, oldFans = S.fans
+    const cashBefore = S.cash
+    const mi = S.moments[playedTurn]
+    const recap = (MOMENTS[playedTurn - 1] && mi !== undefined) ? MOMENTS[playedTurn - 1].opts[mi].recap : ''
 
     const merchSales = S.merchPayoutNext; S.merchPayoutNext = 0
     const sponsorDeal = S.sponsorDealNext; S.sponsorDealNext = 0
@@ -1125,31 +1262,30 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 
     const opsOpt = findOpt('ops', opsId), mktOpt = findOpt('mkt', mktId), plyOpt = findOpt('ply', plyId)
 
-    const hiring = !!(opsOpt && opsOpt.id === 'comms')
-    if (hiring) S.comms = { hired: true, turn: S.turn }
-    const hasComms = !!(S.comms && S.comms.hired)
-    const gain = o => Math.round((o.fans || 0) * (hasComms && o.chan ? CHANNEL_BOOST : 1))
+    const hiring = !!(opsOpt && opsOpt.id === 'mgr')
+    if (hiring) S.mgr = { hired: true, turn: S.turn }
+    const hasMgr = mgrHired()
 
     if (opsOpt){
       variableCosts += opsOpt.cost || 0
-      S.tsr += opsOpt.tsr || 0; S.morale += opsOpt.morale || 0; S.fans += gain(opsOpt); S.salaries += opsOpt.salaries || 0
-      calls.push(`Operations: ${opsOpt.name} (${fmtMoney(opsOpt.cost || 0)}${opsOpt.salaries ? `; +${fmtMoney(opsOpt.salaries)}/turn salary` : ''})`)
+      S.tsr += opsOpt.tsr || 0; S.morale += opsOpt.morale || 0; S.fans += opsOpt.fans || 0; S.salaries += opsOpt.salaries || 0
+      calls.push(`Operations: ${opsOpt.name} (${fmtMoney(opsOpt.cost || 0)}${opsOpt.salaries ? `; +${fmtMoney(opsOpt.salaries)} fixed cost every quarter` : ''})`)
     }
     if (mktOpt){
       variableCosts += mktOpt.cost || 0
-      S.fans += gain(mktOpt); S.morale += mktOpt.morale || 0; S.salaries += mktOpt.salaries || 0
+      S.fans += mktOpt.fans || 0; S.morale += mktOpt.morale || 0; S.salaries += mktOpt.salaries || 0
       if (mktOpt.payout){ if (mktOpt.id === 'merch') S.merchPayoutNext = mktOpt.payout; else S.sponsorDealNext = mktOpt.payout }
-      calls.push(`Marketing: ${mktOpt.name} (${fmtMoney(mktOpt.cost || 0)}${mktOpt.payout ? `; +${fmtMoney(mktOpt.payout)} next turn` : ''}${mktOpt.salaries ? `; +${fmtMoney(mktOpt.salaries)}/turn salary` : ''})`)
+      calls.push(`Marketing: ${mktOpt.name} (${fmtMoney(mktOpt.cost || 0)}${mktOpt.payout ? `; pays ${fmtMoney(mktOpt.payout)} next quarter` : ''}${mktOpt.salaries ? `; +${fmtMoney(mktOpt.salaries)} fixed cost every quarter` : ''})`)
     }
     if (plyOpt){
       variableCosts += plyOpt.cost || 0
-      S.tsr += plyOpt.tsr || 0; S.morale += plyOpt.morale || 0; S.fans += gain(plyOpt)
+      S.tsr += plyOpt.tsr || 0; S.morale += plyOpt.morale || 0; S.fans += plyOpt.fans || 0
       calls.push(`Player Focus: ${plyOpt.name} (${fmtMoney(plyOpt.cost || 0)})`)
     }
 
     S.tsr = clamp(Math.round(S.tsr), 0, 100)
     S.morale = clamp(Math.round(S.morale), 0, 100)
-    if (hasComms) S.fans += COMMS_FANS
+    const fansBeforeMatch = S.fans
 
     const pWin = winProbability()
     const didWin = Math.random() < pWin
@@ -1163,86 +1299,71 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
       variableCosts += 10000
       const before = S.fans
       S.fans = Math.max(0, Math.round(S.fans * 0.95))
-      prizeText = `Sponsor penalty −$10,000 and fans ${before.toLocaleString()} → ${S.fans.toLocaleString()} (−5%).`
-    }
-
-    let incident = null
-    if (!hasComms && playedTurn >= 2 && Math.random() < INCIDENT_P){
-      incident = pk(INCIDENTS)
-      variableCosts += INCIDENT_COST
-      S.fans = Math.max(0, Math.round(S.fans * (1 - INCIDENT_FANS)))
+      prizeText = `Penalty −$10,000 and fans ${before.toLocaleString()} → ${S.fans.toLocaleString()} (−5%).`
     }
 
     const sponsorships = Math.round((S.rank === 1 ? 30000 : S.rank === 2 ? 18000 : 9000) + Math.max(0, S.tsr - 50) * 120)
-    const commsRevenue = hasComms ? COMMS_REV : 0
+    const mgrRevenue = hasMgr ? MGR_REV : 0
+    const incomeParts = S.income.map(e => ({ label: e.label, amt: (e.base || 0) + (didWin ? (e.perWin || 0) : 0) + Math.round(((e.perK || 0) * fansBeforeMatch) / 1000) }))
+    const incomeSum = incomeParts.reduce((a, x) => a + x.amt, 0)
+    const onceRev = S.once ? S.once.rev : 0, onceCost = S.once ? S.once.cost : 0
+    const shareCost = Math.round(prizeMoney * (S.prizeShare + S.onceShare))
+    variableCosts += onceCost + shareCost
     const fixedExpenses = S.salaries
     variableCosts += TRAVEL
 
-    const totalRevenue = sponsorships + commsRevenue + merchSales + sponsorDeal + prizeMoney
+    const totalRevenue = sponsorships + mgrRevenue + incomeSum + onceRev + merchSales + sponsorDeal + prizeMoney
     const totalExpenses = fixedExpenses + variableCosts
     const profitLoss = totalRevenue - totalExpenses
     S.cash += profitLoss
+    S.once = null; S.onceShare = 0
 
     let rankChangeText = ''
     if (S.rank === 3 && S.tsr >= 70 && S.fans >= 7000){ S.rank = 2; rankChangeText = `Promoted to ${rankName(S.rank)}!` }
     else if (S.rank === 2 && S.tsr >= 80 && S.fans >= 12000){ S.rank = 1; rankChangeText = `Promoted to ${rankName(S.rank)}!` }
     else if (S.tsr <= 50 && S.morale <= 40 && S.fans < 5000 && S.rank < 3){ S.rank = 3; rankChangeText = `Demoted to ${rankName(S.rank)}` }
 
-    let fanMilestone = '', milestoneBonus = 0
-    if (oldFans < 10000 && S.fans >= 10000){ milestoneBonus = 20000; fanMilestone = '10K fan milestone' }
-    else if (oldFans < 15000 && S.fans >= 15000){ milestoneBonus = 30000; fanMilestone = '15K fan milestone' }
-    else if (oldFans < 25000 && S.fans >= 25000){ milestoneBonus = 50000; fanMilestone = '25K fan milestone' }
-    if (fanMilestone){
-      if (PAY_MILESTONE_BONUSES){ S.cash += milestoneBonus; fanMilestone += `! Sponsor bonus +${fmtMoney(milestoneBonus)}` }
-      else fanMilestone += '! Sponsors are taking notice.'
-    }
-
-    const fb = academicFeedback(profitLoss, { revenue: totalRevenue, expenses: totalExpenses, fixed: fixedExpenses, variable: variableCosts })
-
     const revParts = [`Sponsors ${fmtMoney(sponsorships)}`]
-    if (commsRevenue > 0) revParts.push(`Sponsor relations ${fmtMoney(commsRevenue)}`)
+    if (mgrRevenue > 0) revParts.push(`Sponsorship manager ${fmtMoney(mgrRevenue)}`)
+    incomeParts.forEach(x => { if (x.amt) revParts.push(`${x.label} ${fmtMoney(x.amt)}`) })
+    if (onceRev > 0) revParts.push(`Home event ${fmtMoney(onceRev)}`)
     if (prizeMoney > 0) revParts.push(`Prize ${fmtMoney(prizeMoney)}`)
     if (merchSales > 0) revParts.push(`Merch ${fmtMoney(merchSales)}`)
     if (sponsorDeal > 0) revParts.push(`Deal ${fmtMoney(sponsorDeal)}`)
 
     const warnings = []
-    if (S.cash < 0) warnings.push('Negative cash. One more negative turn means bankruptcy!')
-    if (S.morale < 30) warnings.push('Low morale. Risk of a player mutiny!')
+    if (S.cash < 0) warnings.push('Cash is below $0. One more quarter like this ends the game.')
+    if (S.morale < 30) warnings.push('Morale is very low. The players may quit.')
 
-    S.history.push({ turn: playedTurn, win: didWin, opp: info.opp, tour: info.name, net: profitLoss, cash: S.cash, rank: S.rank, fans: S.fans, tsr: S.tsr, morale: S.morale, incident: !!incident, comms: hasComms })
-    S.lastDelta = { tsr: S.tsr - oldTSR, morale: S.morale - oldMorale, fans: S.fans - oldFans }
-    S.lastResult = {
-      turn: S.turn, win: didWin, winProbability: `${(pWin * 100).toFixed(1)}%`, prizeText,
-      revenue: totalRevenue, expenses: totalExpenses, netCash: profitLoss, newCash: S.cash,
-      oldTSR, newTSR: S.tsr, oldMorale, newMorale: S.morale, oldFans, newFans: S.fans,
-      rankChange: rankChangeText, fanMilestone, warnings, feedback: fb
+    const fin = {
+      revenue: totalRevenue, fixed: fixedExpenses, variable: variableCosts, share: shareCost,
+      profit: profitLoss, breakeven: fixedExpenses + variableCosts,
+      cashBefore, cashAfter: S.cash
     }
+    S.history.push({ turn: playedTurn, win: didWin, opp: info.opp, tour: info.name, net: profitLoss, cash: S.cash, fin })
+    S.lastDelta = { tsr: S.tsr - oldTSR, morale: S.morale - oldMorale, fans: S.fans - oldFans }
 
     const posts = []
-    posts.push({ q, av: didWin ? '🏆' : '💔', k: didWin ? 'pos' : 'neg', h: `Tournament ${didWin ? 'win' : 'loss'} (${(pWin * 100).toFixed(1)}% odds)`, p: [prizeText] })
-    posts.push({ q, av: profitLoss >= 0 ? '💵' : '📉', k: profitLoss >= 0 ? 'pos' : 'neg', h: `Turn net ${sign(profitLoss)}${fmtMoney(Math.abs(profitLoss))}`, p: [`Revenue: ${revParts.join(' + ')} = ${fmtMoney(totalRevenue)}`, `Expenses: fixed ${fmtMoney(fixedExpenses)} + variable ${fmtMoney(variableCosts)} = ${fmtMoney(totalExpenses)}`, `Cash ${fmtMoney(S.cash)} · TSR ${S.tsr} · Morale ${S.morale} · Fans ${S.fans.toLocaleString()}`] })
+    posts.push({ q, av: didWin ? '🏆' : '💔', k: didWin ? 'pos' : 'neg', h: `Tournament ${didWin ? 'win' : 'loss'} (${Math.round(pWin * 100)}% chance)`, p: [prizeText] })
+    posts.push({ q, av: profitLoss >= 0 ? '💵' : '📉', k: profitLoss >= 0 ? 'pos' : 'neg', h: `Quarter result ${signed(profitLoss)}`, p: [`Money in ${fmtMoney(totalRevenue)}: ${revParts.join(' + ')}`, `Money out ${fmtMoney(totalExpenses)}: fixed ${fmtMoney(fixedExpenses)} + variable ${fmtMoney(variableCosts)}${shareCost ? ` (includes ${fmtMoney(shareCost)} prize share to players)` : ''}`, `Break-even was ${fmtMoney(totalExpenses)}. Cash left: ${fmtMoney(S.cash)}`, `TSR ${S.tsr} · Morale ${S.morale} · Fans ${S.fans.toLocaleString()}`] })
     if (rankChangeText) posts.push({ q, av: rankChangeText.startsWith('Promoted') ? '📈' : '📉', k: rankChangeText.startsWith('Promoted') ? 'pos' : 'neg', h: rankChangeText, p: [] })
-    if (fanMilestone) posts.push({ q, av: '🎉', k: 'pos', h: fanMilestone, p: [] })
     warnings.forEach(w => posts.push({ q, av: '⚠️', k: 'neg', h: w, p: [] }))
-    if (hiring) posts.push({ q, av: '🎙️', k: 'pos', h: `Hired ${CAST.comms} as communications director`, p: [`The desk adds ${COMMS_FANS} fans and ${fmtMoney(COMMS_REV)} in sponsor relations every quarter, and shields the club from PR incidents.`] })
-    if (incident) posts.push({ q, av: '🔥', k: 'neg', h: `PR incident: ${incident.feed}`, p: [`Cost ${fmtMoney(INCIDENT_COST)} and ${Math.round(INCIDENT_FANS * 100)}% of the fanbase. A communications director would have prevented this.`] })
-    posts.push({ q, av: '💡', h: 'Manager’s note', p: [fb] })
-    posts.push({ q, av: '📝', h: 'Your calls', p: calls })
+    if (hiring) posts.push({ q, av: '🤝', k: 'pos', h: 'Hired a sponsorship manager', p: [`Adds ${fmtMoney(MGR_REV)} in sponsor money every quarter and lets you sign sponsor deals.`] })
+    posts.push({ q, av: '💡', h: 'Tip', p: [quarterTip(profitLoss)] })
+    posts.push({ q, av: '📝', h: 'Your choices', p: calls })
     addPosts(posts)
     const ctx = {
-      turn: playedTurn, info, win: didWin, pWin, prize: prizeMoney,
+      turn: playedTurn, info, win: didWin, pWin, prize: prizeMoney, recap,
       calls: { ops: opsOpt, mkt: mktOpt, ply: plyOpt },
-      revenue: totalRevenue, expenses: totalExpenses, net: profitLoss, cash: S.cash,
-      oldTSR, newTSR: S.tsr, oldMorale, newMorale: S.morale, oldFans, newFans: S.fans,
-      rankChange: rankChangeText, fanMilestone, warnings, incident, hiring, hasComms
+      net: profitLoss, cash: S.cash, rankChange: rankChangeText, hiring, hasMgr, fin
     }
     return { n: posts.length, ctx }
   }
 
   function checkEnd(){
     if (S.cash < 0) S.negCashStreak = (S.negCashStreak || 0) + 1; else S.negCashStreak = 0
-    if (S.negCashStreak >= 2){ S.over = { title: 'Financial Ruin', detail: 'Cash reserves were below $0 for two consecutive turns.' }; return }
-    if (S.morale <= 0){ S.over = { title: 'Mutiny', detail: 'Player morale fell to 0. The roster refuses to compete.' }; return }
+    if (S.negCashStreak >= 2){ S.over = { title: 'Financial Ruin', detail: 'Cash was below $0 for two quarters in a row.' }; return }
+    if (S.morale <= 0){ S.over = { title: 'Mutiny', detail: 'Morale fell to 0. The players quit.' }; return }
   }
 
   function getAchievement(score, profit, fans, cash){
@@ -1252,21 +1373,21 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     const financialMogul = profit > 100000
     const brandBuilder = fans >= 20000 && S.rank <= 2
     const eliteCompetitor = elite && S.tsr >= 85
-    if (domination) return { grade: 'S', title: '🏆 TOTAL DOMINATION', desc: 'Elite rank, massive fanbase, huge profit. You are a legendary esports manager!', c1: '#b45309', c2: '#f59e0b', bg: '#fff1d2', win: true }
-    if (financialMogul || brandBuilder || eliteCompetitor) return { grade: 'A+', title: '⭐ EXCEPTIONAL SUCCESS', desc: financialMogul ? 'Financial genius! You built a highly profitable organization.' : brandBuilder ? 'Brand empire! Your fanbase is massive and sponsors love you.' : 'Elite competitor! Your team dominates at the highest level.', c1: '#b45309', c2: '#f59e0b', bg: '#fff1d2', win: true }
-    if (score >= 70) return { grade: 'A', title: '🎯 STRONG SUCCESS', desc: 'Excellent management across the board. Your org is thriving!', c1: '#15803d', c2: '#22b8cf', bg: '#dcf4e4', win: true }
-    if (score >= 60) return { grade: 'B+', title: '✅ SOLID SUCCESS', desc: 'Good performance! You built a sustainable esports organization.', c1: '#15803d', c2: '#22b8cf', bg: '#dcf4e4', win: true }
-    if (score >= 50 && survived) return { grade: 'B', title: '👍 MODERATE SUCCESS', desc: 'Decent results. You kept the lights on and showed promise.', c1: '#0f766e', c2: '#3b82f6', bg: '#d9f3ee', win: true }
-    if (score >= 40 && survived) return { grade: 'C', title: '📊 PASSING', desc: "You survived 8 turns without bankruptcy. That’s a win in this business!", c1: '#4338ca', c2: '#3b82f6', bg: '#eceeff', win: true }
-    if (survived) return { grade: 'D', title: '😅 SURVIVED', desc: 'The team survived but struggled. Learn from this experience.', c1: '#b45309', c2: '#d97706', bg: '#fff1d2', win: false }
-    return { grade: 'F', title: '❌ FAILED', desc: 'Bankruptcy or mutiny ended your run early. Try a different strategy!', c1: '#be123c', c2: '#e11d48', bg: '#ffe3e9', win: false }
+    if (!survived) return { grade: 'F', title: '🔁 NOT PASSING YET', desc: 'The season ended with negative cash. Rank and fans cannot make up for a club that cannot pay its bills. Look at your decisions below, pick a new plan, and try again.', c1: '#be123c', c2: '#e11d48', bg: '#ffe3e9', win: false }
+    if (domination) return { grade: 'S', title: '🏆 TOTAL DOMINATION', desc: 'Elite rank, a huge fanbase and big profit. You are a legendary esports manager!', c1: '#92400e', c2: '#b45309', bg: '#fff1d2', win: true }
+    if (financialMogul || brandBuilder || eliteCompetitor) return { grade: 'A+', title: '⭐ EXCEPTIONAL SUCCESS', desc: financialMogul ? 'Financial genius! You built a very profitable club.' : brandBuilder ? 'Brand empire! Your fanbase is huge and sponsors love you.' : 'Elite competitor! Your team dominates at the top level.', c1: '#92400e', c2: '#b45309', bg: '#fff1d2', win: true }
+    if (score >= 70) return { grade: 'A', title: '🎯 STRONG SUCCESS', desc: 'Excellent management across the board. Your club is thriving!', c1: '#166534', c2: '#0f766e', bg: '#dcf4e4', win: true }
+    if (score >= 60) return { grade: 'B+', title: '✅ SOLID SUCCESS', desc: 'Good work! You built a club that can last.', c1: '#166534', c2: '#0f766e', bg: '#dcf4e4', win: true }
+    if (score >= 50) return { grade: 'B', title: '👍 MODERATE SUCCESS', desc: 'Decent results. You kept the lights on and showed promise.', c1: '#0f766e', c2: '#1d4ed8', bg: '#d9f3ee', win: true }
+    if (score >= 40) return { grade: 'C', title: '📊 PASSING', desc: 'You finished all 8 quarters with cash in the bank. That is a win in this business!', c1: '#4338ca', c2: '#1d4ed8', bg: '#eceeff', win: true }
+    return { grade: 'D', title: '😅 SURVIVED', desc: 'The club survived but struggled. Learn from it and try again.', c1: '#92400e', c2: '#b45309', bg: '#fff1d2', win: false }
   }
 
   function finalStatsHtml(endingCash, profit){
     const st = (k, v, n) => `<div class="stat"><b>${k}</b><span class="v">${v}</span>${n ? `<div class="small">${n}</div>` : ''}</div>`
     return `<div class="stats6">
       ${st('Manager', esc(displayName()))}
-      ${st('Final cash', fmtMoney(endingCash), endingCash < 0 ? '<span class="neg">Bankrupt</span>' : '')}
+      ${st('Final cash', fmtMoney(endingCash), endingCash < 0 ? '<span class="neg">Below $0</span>' : '')}
       ${st('Profit / loss', sign(profit) + fmtMoney(Math.abs(profit)), profit >= 0 ? '<span class="pos">Profitable</span>' : '<span class="neg">Loss</span>')}
       ${st('Final rank', rankName(S.rank))}
       ${st('Team skill (TSR)', S.tsr)}
@@ -1285,11 +1406,46 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     return { endingCash, endingFans, profit, rankSub, profitSub, fanSub, finalScore, a }
   }
 
+  function moneySummaryHtml(){
+    const t = totals()
+    if (!t.n) return ''
+    const out = t.fixed + t.variable
+    return `
+    <section class="card" aria-labelledby="mnyh">
+      <h3 id="mnyh">Your money over the season</h3>
+      <div class="kv"><span>Money in</span><b>${fmtMoney(t.inn)}</b></div>
+      <div class="kv"><span>Fixed costs (salaries)</span><b>${fmtMoney(t.fixed)}</b></div>
+      <div class="kv"><span>Variable costs (choices, travel, prize shares)</span><b>${fmtMoney(t.variable)}</b></div>
+      <div class="kv tot"><span>Money out</span><b>${fmtMoney(out)}</b></div>
+      <div class="kv"><span>Starting cash</span><b>${fmtMoney(STARTING.cash)}</b></div>
+      <div class="kv tot"><span>Cash left</span><b>${fmtMoney(S.cash)}</b></div>
+    </section>`
+  }
+
+  function decisionsRecapHtml(){
+    const rows = MOMENTS.map((mo, i) => {
+      const idx = S.moments[i + 1]
+      return idx === undefined ? '' : `<div class="kv"><span>Q${i + 1} · ${esc(mo.topic)}</span><b>${esc(mo.opts[idx].name)}</b></div><p class="small muted">Big idea: ${esc(mo.idea)}</p>`
+    }).join('')
+    if (!rows) return ''
+    return `
+    <section class="card" aria-labelledby="dech">
+      <h3 id="dech">Your Chapter 13 decisions</h3>
+      ${rows}
+      <p class="small muted">Which decisions helped your cash? Which ones cost you? Talk it over with your class.</p>
+    </section>`
+  }
+
+  function notesHtml(){
+    return (S.notes && S.notes.trim()) ? `
+    <section class="card" aria-labelledby="noteh">
+      <h3 id="noteh">Your notes</h3>
+      <p class="userNotes">${esc(S.notes)}</p>
+    </section>` : ''
+  }
+
   function finalScreen(){
     const F = computeFinal(), a = F.a
-    const avoidedRuin = (S.negCashStreak || 0) < 2 && !(F.endingCash < 0)
-    const balanced = (S.tsr >= 60 && S.morale >= 60) || (F.profit > 0 && S.rank <= 2)
-    const assess = `${avoidedRuin ? 'You avoided financial ruin' : 'You flirted with financial ruin'}, ${balanced ? 'balanced short-term performance with long-term capability building' : 'over-weighted either short-term pushes or long-term investments'}, and ${F.profit > 0 ? 'your revenues exceeded expenses to produce profit' : 'expenses outpaced revenues, resulting in a loss'}. Consider how fixed costs (salaries) and variable decisions (marketing, travel, retreats) influenced contribution margin and your path to break-even.`
     const bar = (lab, pts, w) => `<div class="bar"><div class="bt"><span>${lab}</span><span>${pts} × ${w} = ${(pts * w).toFixed(1)}</span></div><div class="tr" role="img" aria-label="${lab}: ${pts} out of 100"><i style="width:${pts}%"></i></div></div>`
 
     return `
@@ -1300,7 +1456,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
         <span class="kicker">Final report · ${esc(displayName())} · ${esc(orgName())}</span>
         <h2 id="gradeh">${a.title}</h2>
         <p class="lead">${a.desc}</p>
-        <p><b>${a.win ? '🎉 You win!' : 'Try again for a better result.'}</b> Final score ${F.finalScore} / 100.</p>
+        <p><b>${a.win ? '🎉 You pass!' : 'Try again for a better result.'}</b> Final score ${F.finalScore} / 100.</p>
         <p class="go"><button class="btn primary" id="btnPDF" type="button">🖨 Save final report (PDF)</button> <button class="btn" id="btnAgain" type="button">↺ Play again</button></p>
       </div>
     </section>
@@ -1308,13 +1464,12 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     <div class="two">
       <section class="card" aria-labelledby="sbh"><h3 id="sbh">Score breakdown</h3>
         <div class="bars">${bar('Rank (40%)', F.rankSub, 0.40)}${bar('Profit (40%)', F.profitSub, 0.40)}${bar('Fanbase (20%)', F.fanSub, 0.20)}</div>
-        <div class="note info"><b>Final score: ${F.finalScore} / 100</b></div>
+        <p class="small muted">You must finish with $0 or more in cash to pass.</p>
       </section>
-      <section class="card" aria-labelledby="pah"><h3 id="pah">Performance analysis</h3><p>${assess}</p>
-        <h4 style="margin-top:14px">Win conditions</h4>
-        <p class="small">40+ and survived = Passing · 50+ = Moderate · 60+ = Solid · 70+ = Strong. Total Domination: Elite + 15K fans + $50K profit. Exceptional: $100K+ profit, or 20K+ fans, or Elite with TSR 85+.</p>
-      </section>
-    </div>`
+      ${moneySummaryHtml()}
+    </div>
+    ${decisionsRecapHtml()}
+    ${notesHtml()}`
   }
 
   function gameOverScreen(){
@@ -1327,16 +1482,23 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
         <span class="kicker">Game over · ${esc(displayName())}</span>
         <h2 id="goh">${esc(S.over.title)}</h2>
         <p class="lead">${esc(S.over.detail)}</p>
-        <p>You played ${Math.min(S.history.length, S.turnsTotal)} of ${S.turnsTotal} turns. A different mix of spending, training and rest could change the ending.</p>
+        <p>You played ${Math.min(S.history.length, S.turnsTotal)} of ${S.turnsTotal} quarters. A different mix of spending, training and rest could change the ending. You can try again as many times as you like.</p>
         <p class="go"><button class="btn primary" id="btnPDF" type="button">🖨 Save report (PDF)</button> <button class="btn" id="btnAgain" type="button">↺ Try again</button></p>
       </div>
     </section>
-    <section class="card" aria-labelledby="gsh"><h3 id="gsh">Where it ended</h3>${finalStatsHtml(S.cash, profit)}</section>`
+    <div class="two">
+      <section class="card" aria-labelledby="gsh"><h3 id="gsh">Where it ended</h3>${finalStatsHtml(S.cash, profit)}</section>
+      ${moneySummaryHtml()}
+    </div>
+    ${decisionsRecapHtml()}
+    ${notesHtml()}`
   }
 
   /* ---------- render ---------- */
   function render(focusResult){
+    stopSpeak()
     renderHeader()
+    const nb = $('notes'); if (nb && nb.value !== (S.notes || '')) nb.value = S.notes || ''
     if (!S.started){
       $desk.innerHTML = introScreen()
     } else if (S.over){
@@ -1358,12 +1520,27 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
 
   /* ---------- events ---------- */
   document.addEventListener('change', e => {
-    if (e.target && e.target.matches('.opt input')) updatePlan()
+    if (e.target && (e.target.name === 'rsize' || e.target.name === 'rspace')){
+      if (e.target.name === 'rsize') prefs.size = +e.target.value; else prefs.space = +e.target.value
+      applyPrefs(); savePrefs(); return
+    }
+    if (!(e.target && e.target.matches('.opt input'))) return
+    if (e.target.name === 'moment'){
+      document.querySelectorAll('.opt').forEach(l => l.classList.toggle('sel', l.querySelector('input').checked))
+      const b = $('btnLock'); if (b) b.disabled = false
+      return
+    }
+    updatePlan()
+  })
+
+  document.addEventListener('input', e => {
+    if (e.target && e.target.id === 'notes'){ S.notes = e.target.value; save() }
   })
 
   document.addEventListener('click', e => {
     const t = e.target.closest('button')
     if (!t) return
+    if (t.dataset && t.dataset.listen){ speak(textFor(t.dataset.listen), t); return }
     switch (t.id){
       case 'btnStartGame': {
         const n = $('studentName'), og = $('orgName')
@@ -1374,11 +1551,24 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
         ensureChoices()
         S.paper = launchPaper()
         save(); render()
-        window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' })
+        focusEl($('paper'))
+        break
+      }
+      case 'btnLock': {
+        const mo = MOMENTS[S.turn - 1]
+        const r = document.querySelector('input[name="moment"]:checked')
+        if (!mo || !r || S.moments[S.turn] !== undefined) return
+        const i = +r.value
+        applyEffects(mo.opts[i].eff)
+        S.moments[S.turn] = i
+        addPosts([{ q: `Y${Math.floor((S.turn - 1) / 4) + 1} Q${((S.turn - 1) % 4) + 1}`, av: '🧠', h: `Chapter 13: ${mo.topic}`, p: [`You chose ${mo.opts[i].name}.`, mo.opts[i].recap] }])
+        save(); render()
+        focusEl($('momh'))
         break
       }
       case 'btnConfirm': {
         if (S.turn > S.turnsTotal || S.over) return
+        if (MOMENTS[S.turn - 1] && S.moments[S.turn] === undefined) return
         const ops = getChoice('ops'), mkt = getChoice('mkt'), ply = getChoice('ply')
         if (!ops || !mkt || !ply) return
         const { n, ctx } = applyDecisions(ops, mkt, ply)
@@ -1395,7 +1585,7 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
         break
       }
       case 'btnReset':
-        if (!confirm('Start over from Turn 1? Your current run will be lost.')) return
+        if (!confirm('Start over from Quarter 1? Your current game will be lost.')) return
         resetGame()
         break
       case 'btnAgain':
@@ -1424,13 +1614,14 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
             try {
               const data = JSON.parse(reader.result)
               if (typeof data !== 'object' || data === null || typeof data.turn !== 'number') throw new Error('bad save')
+              if (data.v !== VERSION){ alert('That save is from an older version of the game, so it cannot be loaded. Start a new game instead.'); return }
               S = Object.assign(fresh(), data)
-              if (data.started === undefined && (data.seenTutorial || data.turn > 1)) S.started = true
               S.seenTutorial = true
               S.currentChoices = data.currentChoices || null
               if (!Array.isArray(S.feed)) S.feed = []
-              addPosts([{ av: '📂', h: 'Save loaded', p: ['Continue your run!'] }])
+              addPosts([{ av: '📂', h: 'Save loaded', p: ['Pick up where you left off!'] }])
               save(); render()
+              focusEl($('paper') || $('introh'))
             } catch (err) { alert('Could not load that save file. Choose a managerx-save.json file you saved from this game.') }
           }
           reader.readAsText(f)
@@ -1444,9 +1635,16 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
       case 'gclose':
         $dlg.close ? $dlg.close() : $dlg.removeAttribute('open')
         break
+      case 'btnRead':
+        if ($rdlg.showModal) $rdlg.showModal(); else $rdlg.setAttribute('open', '')
+        break
+      case 'rclose':
+        $rdlg.close ? $rdlg.close() : $rdlg.removeAttribute('open')
+        break
     }
   })
   $dlg.addEventListener('click', e => { if (e.target === $dlg && $dlg.close) $dlg.close() })
+  $rdlg.addEventListener('click', e => { if (e.target === $rdlg && $rdlg.close) $rdlg.close() })
 
   function resetGame(keepName){
     const name = keepName ? S.name : ''
@@ -1459,16 +1657,17 @@ dialog .db{padding:0 22px 22px;max-height:70vh;overflow:auto}
     if (S.started){ S.currentChoices = pickChoices(); S.paper = launchPaper() }
     S.feed = []
     save(); render()
-    window.scrollTo({ top: 0, behavior: 'auto' })
+    focusEl($('paper') || $('introh'))
   }
 
   /* ---------- boot ---------- */
   const auto = loadAuto()
-  if (auto && typeof auto.turn === 'number' && auto.turn <= auto.turnsTotal + 1){
+  if (auto && auto.v === VERSION && typeof auto.turn === 'number' && auto.turn <= auto.turnsTotal + 1){
     S = Object.assign(fresh(), auto)
-    if (auto.started === undefined && (auto.seenTutorial || auto.turn > 1)) S.started = true
     if (!Array.isArray(S.feed)) S.feed = []
   }
+  loadPrefs()
+  applyPrefs()
   render()
 })()
 </script>
